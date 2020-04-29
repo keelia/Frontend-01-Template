@@ -4,7 +4,7 @@
 // OctalIntegerLiteral 
 // HexIntegerLiteral
 //Test Set
-const tests = [
+const tests_number_literal = [
     {
         test:'DecimalLiteralinside 1233',
         expect:1233
@@ -59,19 +59,19 @@ const decimalLiteralRegExp = /\b(((0|([1-9][0-9]*))\.([0-9]*)((e|E)(\+|\-)?[0-9]
 //HexiIntegerLiteral = (0(x|X)[0-9a-fA-F]+)
 const otherNumericLiteral = /(\b(((0|([1-9][0-9]*))\.([0-9]*)((e|E)(\+|\-)?[0-9]+)*)|(\.[0-9]+((e|E)(\+|\-)?[0-9]+)*)|((0|([1-9][0-9]*))((e|E)(\+|\-)?[0-9]+)*))\b)|(0(b|B)[01]+)|(0(o|O)[0-7]+)|(0(x|X)[0-9a-fA-F]+)/g
 function runTest(){
-    console.log(tests.map(item=>({
+    return tests_number_literal.map(item=>({
         result:item.test.match(otherNumericLiteral),
         expect:item.expect
-    })))
+    }))
 }
 
-runTest()
+console.log(runTest())
 
 
 // \xnn   character with given hex code (1 or 2 hex digits)  
 // \unnnn Unicode character with given code (1--4 hex digits)
 function UTF8_Encoding(str){
-    const Bytes = [(2**7 - 1),(2**11 -1),(2**16 -1),(2**21 - 1)]
+    const Bytes = [parseInt('007F',16),parseInt('07FF',16),parseInt('FFFF',16),(parseInt('10FFFF',16))]
     //1.Get binary codepoint of each item in the str
     const codePoints = str.split('').map(s=>s.codePointAt(0))
     return codePoints.map(codepoint=>{
@@ -110,22 +110,21 @@ function UTF8_Encoding(str){
 }
 
 //console.log(UTF8_Encoding('€')) //\x21 \x33
-console.log(UTF8_Encoding('a3'),UTF8_Encoding('€')) //\x21 \x33
+console.log(UTF8_Encoding('a3'),UTF8_Encoding('€'),UTF8_Encoding('€')) //\x21 \x33
 
 //StringLiteral = (" + DoubleStringCharacters? + " )| ('+ SingleStringCharacters? + ')
 
-//DoubleStringCharacters =DoubleStringCharacter DoubleStringCharacters?
+//DoubleStringCharacters = DoubleStringCharacter DoubleStringCharacters?
 //SingleStringCharacters = SingleStringCharacter SingleStringCharacters?
 
 //DoubleStringCharacter = (SourceCharacter ~[" | \ | LineTerminator]) | <LS> | <PS> | \ EscapeSequence | LineContinuation
 
 //SingleStringCharacter = (SourceCharacter ~[' | \ | LineTerminator]) | <LS> | <PS> | \ EscapeSequence | LineContinuation
 
-//LineContinuation = \ LineTerminatorSequence
 
-//SourceCharacter = Unicode code point
+//SourceCharacter = Unicode code point[unique decimal numbers] = [0-9]{1,7}
 
-//EscapeSequence = CharacterEscapeSequence | 0 | HexEscapeSequence | UnicodeEscapeSequence
+//EscapeSequence = CharacterEscapeSequence | 0[no decimal digit is allowed after \0] | HexEscapeSequence | UnicodeEscapeSequence
 
 //CharacterEscapeSequence = SingleEscapeCharater | NonEscapeCharacter
 
@@ -145,5 +144,63 @@ console.log(UTF8_Encoding('a3'),UTF8_Encoding('€')) //\x21 \x33
 
 //Codepoint = [0-0a-fA-F]+  //HexDigits but only if MV(mathematical value) of HexDigits ≤ 0x10FFFF
 
-// LineTerminator = <LF>|<CR> | <LS> | <PS>
-//LineTerminatorSequence = <LF> | <CR>[lookahead ≠ <LF>] <LS> | <PS> | <CR> | <LF>
+//LineTerminator = <LF>|<CR> | <LS>(LINE SEPARATOR) | <PS>(Paragraph Separator) = \n(U+000A) | \r(U+000D) | U+2028 | u+2029
+//LineTerminatorSequence = <LF> | <CR>[lookahead ≠ <LF>:not followed by <LF>] | <LS> | <PS> | <CR><LF> = \n(U+000A) | (\r(U+000D))(?! \n(U+000A)) |U+2028 | u+2029 | (\r(U+000D))(\n(U+000A))
+
+//LineContinuation = \ LineTerminatorSequence = ((\n) | (\r)(?!(\n)) | \u0028 | \u0029 | (\r)(\n))
+
+const tests_string_literal = [
+    {
+        test:'StringLiteralinside 1233',
+        expect:1233
+    },
+    {
+        test:'DecimalLiteral inside 1233.22222',
+        expect:1233.22222
+    },
+    {
+        test:'DecimalLiteral with exponent inside 2e+5 and 2e-5 .3e5 .e5',
+        expect:['2e+5','2e-5','2e5']
+    },
+    {
+        test:'no number inside',
+        expect:'null',
+    },
+    {
+        test:'BinaryIntegerLiteral inside 0b11100111 0B000001111 0b1234 0B222',
+        expect:['0b11100111','0B000001111','0b1',]
+    },
+    {
+        test:'OctalIntegerLiteral inside 034 0o10 0O789',
+        expect:['0o10','0O7'],
+    },
+    {
+        test:'HexIntegerLiteral inside 0xe7',
+        expect:['0xe7'],
+    }
+]
+
+let lineTerminatorRegexp = /\u000A|\u000D|\u2028|\u2029/g
+
+let lineTerminatorSequenceRegexp = /\u000A|\u000D(?!\u000A)|\u2028|\u2029|\u000D\u000A/g
+let lineContinuationRegexp = /\\(\u000A|\u000D(?!\u000A)|\u2028|\u2029|\u000D\u000A)/g
+let singleEscapeCharaterRegexp = /[\u0027\u0022\u005c\u0062\u0066\u006e\u0072\u0074\u0076]/g
+
+let escapeCharaterRegexp = /([\u0027\u0022\u005c\u0062\u0066\u006e\u0072\u0074\u0076])|([\u0030-\u0039])|\u0078|\u0075/g
+
+let sourceCharacterRegexp = /[\u0000-\uFFFF]/g
+
+let noEscapeCharacterRegexp = /[\u0000-\u0009\u000B\u000C\u000E-\u0021\u0023-\u0026\u0028\u0029\u003A-\u005B\u005D-\u0061\u0063-\u0065\u0067-\u006D\u006F-\u0071\u0073\u0077\u0079-\u2027\u2030-\uFFFF]/g
+
+let singleStringCharacterRegexp = /([\u0000-\u0009\u000B\u000C-\u0028\u0029-\u2027\u2030-\uFFFF])|\u2028|\u2029|\\((([\u0027\u0022\u005c\u0062\u0066\u006e\u0072\u0074\u0076])|([\u0000-\u0009\u000B\u000C\u000E-\u0021\u0023-\u0026\u0028\u0029\u003A-\u005B\u005D-\u0061\u0063-\u0065\u0067-\u006D\u006F-\u0071\u0073\u0077\u0079-\u2027\u2030-\uFFFF]))|(0(?![0-9]+))|(\u0078[0-9a-fA-F]{2})|(\u0075[0-9a-fA-F]{4}|\u0075[0-9a-fA-F]+))|(\\(\u000A|\u000D(?!\u000A)|\u2028|\u2029|\u000D\u000A))/g
+
+let characterEscapeSequenceRegexp = /([\u0027\u0022\u005c\u0062\u0066\u006e\u0072\u0074\u0076])|([\u0000-\u0009\u000B\u000C\u000E-\u0021\u0023-\u0026\u0028\u0029\u003A-\u005B\u005D-\u0061\u0063-\u0065\u0067-\u006D\u006F-\u0071\u0073\u0077\u0079-\u2027\u2030-\uFFFF])/g
+
+let hexEscapeSquenceRegexp = /\u0078[0-9a-fA-F]{2}/g
+
+let unicodeEscapeSequenceRegexp = /\u0075[0-9a-fA-F]{4}|\u0075[0-9a-fA-F]+/g
+
+let escapeSequenceRegexp = /(([\u0027\u0022\u005c\u0062\u0066\u006e\u0072\u0074\u0076])|([\u0000-\u0009\u000B\u000C\u000E-\u0021\u0023-\u0026\u0028\u0029\u003A-\u005B\u005D-\u0061\u0063-\u0065\u0067-\u006D\u006F-\u0071\u0073\u0077\u0079-\u2027\u2030-\uFFFF]))|(0(?![0-9]+))|(\u0078[0-9a-fA-F]{2})|(\u0075[0-9a-fA-F]{4}|\u0075[0-9a-fA-F]+)/g
+
+
+let stringLiteralRegexp = /(\u0022(([\u0000-\u0009\u000B\u000C-\u0028\u0029-\u2027\u2030-\uFFFF])|\u2028|\u2029|\\((([\u0027\u0022\u005c\u0062\u0066\u006e\u0072\u0074\u0076])|([\u0000-\u0009\u000B\u000C\u000E-\u0021\u0023-\u0026\u0028\u0029\u003A-\u005B\u005D-\u0061\u0063-\u0065\u0067-\u006D\u006F-\u0071\u0073\u0077\u0079-\u2027\u2030-\uFFFF]))|(0(?![0-9]+))|(\u0078[0-9a-fA-F]{2})|(\u0075[0-9a-fA-F]{4}|\u0075[0-9a-fA-F]+))|(\\(\u000A|\u000D(?!\u000A)|\u2028|\u2029|\u000D\u000A)))*\u0022)|(\u0027(([\u0000-\u0009\u000B\u000C-\u0028\u0029-\u2027\u2030-\uFFFF])|\u2028|\u2029|\\((([\u0027\u0022\u005c\u0062\u0066\u006e\u0072\u0074\u0076])|([\u0000-\u0009\u000B\u000C\u000E-\u0021\u0023-\u0026\u0028\u0029\u003A-\u005B\u005D-\u0061\u0063-\u0065\u0067-\u006D\u006F-\u0071\u0073\u0077\u0079-\u2027\u2030-\uFFFF]))|(0(?![0-9]+))|(\u0078[0-9a-fA-F]{2})|(\u0075[0-9a-fA-F]{4}|\u0075[0-9a-fA-F]+))|(\\(\u000A|\u000D(?!\u000A)|\u2028|\u2029|\u000D\u000A)))*\u0027)/g
