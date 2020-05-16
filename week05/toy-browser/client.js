@@ -1,5 +1,6 @@
 //Client就是toy browser的内容
 const net = require("net");
+const parser = require('./parser');
 //用net的库，而不用http库来访问server，把需要的html拿回来，来实现浏览器；
 class ResponseParser{
     constructor(){
@@ -110,7 +111,7 @@ class TrunkedBodyParser{
         this.READING_TRUNK_END = 5
 
         this.isFinished = false
-        this.length = 0 //计数器：记住trunck的大小（多少字符）
+        this.length = 0 //计数器：记住trunck的大小（多少字符）它是16进制数
         this.content = []
         this.current = this.WAITING_LENGTH
     }
@@ -124,10 +125,9 @@ class TrunkedBodyParser{
                     }
                     this.current = this.WAITING_LENGTH_LINE_END
                 }else{
-                    //因为是十进制数，所以直接把它算出来存成length
-                    //因为是在十进制的末位加一位，所以先*10，如26，2进来*10没有影响，然后6进来，前一位就要*10了
-                    this.length *= 10
-                    this.length += char.charCodeAt(0) - '0'.charCodeAt(0)
+                    //length是16进制数
+                    this.length *= 16
+                    this.length += parseInt(char,16)
                 }
                 break;
             case this.WAITING_LENGTH_LINE_END:
@@ -232,7 +232,10 @@ void async function(){
         }
     })
     let response = await request.send()
-    console.log(response)
+    let dom = parser.parseHTML(response.body)
+    console.log(dom)
+//    console.log(JSON.stringify(dom))
+
 }()
 
 
