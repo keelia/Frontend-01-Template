@@ -1,3 +1,4 @@
+const cssParser = require('./css-parser');
 //文本节点的结束是文件结束作为标志的，但是目前这个分析器在没有遇到一个特殊标签之前，可能还会继续在补全字符的状态，所以没办法把最后的文本挂上去，
 //所以这里用symbol（symbol都是唯一的），把它作为特殊字符作为end，标示文件结尾。因为字符都有被占位，所以没办法放一个string进去，而是用symbol。
 //这是小技巧处理绝大多数匹配结尾的情况，有时如处理字符串时候也可能会需要一个标示结尾的东西，不一定是symbol。只要是唯一的东西都可以
@@ -301,7 +302,8 @@ function emit(token){ //提交我们生成的token
         let element = {
             type:'element',
             children:[],
-            attributes:[]
+            attributes:[],
+            parent:top//记录父亲元素便于css computing
         }
         element.tagName = token.tagName
         for (let prop in token) {
@@ -312,8 +314,14 @@ function emit(token){ //提交我们生成的token
                 })
             }
         }
-        top.children.push(element)
-        element.parent = top //自封闭标签到这一步已经完成
+        //可以认为只要创建了element，它就会有自己的css属性，因此在这里调用css computing,
+        //跟style的添加不一样，我们希望尽可能的早计算css，如果也像style一样在出栈的时候才去计算css，
+        //像有<main>这种很大型的父元素具有css属性将会在它的全部children出栈之后，它出栈的时候才会去计算，
+        //但是有很多children的css属性是依赖父元素的，这样整个页面渲染的时间就会非常迟
+        cssParser.computeCSS(element)
+        
+        top.children.push(element)//自封闭标签到这一步已经完成,只记录在父亲的children里面，不必入栈
+
         if(!token.isSelfclosing){//不是自封闭标签的话，入栈
             stack.push(element)
         }
@@ -323,15 +331,34 @@ function emit(token){ //提交我们生成的token
             throw(new Error('Tag start end not match'))
         }else{
             //收集css样式：遇到style标签时，添加css规则
-            if(top.tagName){
-
+            //在pop阶段才会执行css rule add，因为在入栈的时候，style的子元素 text content还没有收集到
+            if(top.tagName == 'style'){
+                // type: 'element',
+                // children: [
+                //     {
+                //     type: 'text',
+                //     content: '\n' +
+                //         '      body div #myid{\n' +
+                //         '          width:100px;\n' +
+                //         '          background-color: #ff5000;\n' +
+                //         '      }\n' +
+                //         '      body div img{\n' +
+                //         '          width:30px;\n' +
+                //         '          background-color: #ff1111;\n' +
+                //         '      }\n' +
+                //         '  '
+                //     }
+                // ],
+                // attributes: [],
+                // tagName: 'style',
+                cssParser.addCSSRules(top.children[0].content)
             }
-            console.log(top)
+            
             stack.pop()//出栈
         }
         currentTextNode == null
     }else if(token.type == 'text'){
-        console.log(JSON.stringify(token.content))
+        //console.log(JSON.stringify(token.content))
         if(currentTextNode == null){
             currentTextNode = {
                 type:'text',
