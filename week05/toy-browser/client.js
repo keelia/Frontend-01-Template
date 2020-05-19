@@ -234,8 +234,7 @@ void async function(){
     let response = await request.send()
     let dom = parser.parseHTML(response.body)
     console.log(dom)
-//    console.log(JSON.stringify(dom))
-
+    //console.log(dom.children[0].children[1].children[0])
 }()
 
 

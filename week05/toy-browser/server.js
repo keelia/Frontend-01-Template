@@ -16,13 +16,17 @@ const server = http.createServer((req, res) => {
           width:30px;
           background-color: #ff1111;
       }
+      .container .second{
+        background-color:#ff3456;
+      }
   </style></head>
-  <body><div>
+  <body><div class="container flex">
     <img id="myid"/>
-    <img />
+    <img class="second" />
   </div></body>
 </html>`
       );
   });
 
 server.listen(8088)
+// <img  class="second-img"/>
