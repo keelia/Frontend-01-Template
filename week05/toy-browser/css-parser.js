@@ -133,8 +133,8 @@ function match(element,selector){
 
     }else if(selector.charAt(0) == "."){
         const attr = element.attributes.filter(att=>(att.name  == 'attr') && (att.value.attrName == 'class'))[0]
-        //class的attrValue理论上是空格分隔的，所以应该用for循环遍历class来判断
-        //？尝试实现空格分隔的class选择器
+        //class-attr的attrValue理论上是空格分隔的，所以应该用循环遍历class来判断
+        //实现空格分隔的class选择器
         const classes = attr && attr.value.attrValue ? attr.value.attrValue.split(" ") : []
         return classes.some(cls=>cls.replace(' ','')== selector.substr(1))
     }else{//tagName
