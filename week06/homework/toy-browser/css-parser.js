@@ -77,42 +77,6 @@ module.exports.computeCSS = function computeCSS(element){
 
     }
 
-    //这里可以判断inline style，并覆盖
-    let inlineStyle = element.attributes.filter(att=>(att.name  == 'style')) //找到inline-style的attraibute
-    const parsedInlinestyle = css.parse(`* {${inlineStyle[0]}}`)//用css-parser parse出rule:用* {} 套成一个css 样式
-    const inlineStyleps= [1,0,0,0]//定义inline style的sp是【1，0，0，0】
-    //然后跟matched的代码差不多，以下
-    // const sp = specificity(rule.selectors[0])
-    //         const computedStyle = element.computedStyle
-
-    //        //把rule里面的decalaration加在element上
-    //        for (const declar of rule.declarations) {
-    //             if(!computedStyle[declar.property]){
-    //                 computedStyle[declar.property] = {}
-    //             }
-    //             if(!computedStyle[declar.property].specificity){
-    //                 //specificity放在每个属性上
-    //                 computedStyle[declar.property].value = declar.value;
-    //                 computedStyle[declar.property].specificity = sp
-    //             }else if(compare(computedStyle[declar.property].specificity,sp)){ //如果这个属性已经有sp了，需要compare
-    //                 //如果原来的优先级低，就把新的sp覆盖上去，否则什么都不做
-    //                 computedStyle[declar.property].value = declar.value;
-    //                 computedStyle[declar.property].specificity = sp
-    //             }
-    //             //没有直接存成element.computedStyle[declar.property] = declar.value
-    //             //为了方便后面判断属性的优先级，预留一个存优先级的地方
-    //             //这里有个瑕疵，命中两条rule的元素，后面的rule会发生覆盖，如下，myid的img会被后面的rule覆盖掉
-    //             // body div #myid{
-    //             //     width:100px;
-    //             //     background-color: #ff5000;
-    //             // }
-    //             // body div img{
-    //             //     width:30px;
-    //             //     background-color: #ff1111;
-    //             // }
-    // }
-
-
 }
 
 function match(element,selector){
