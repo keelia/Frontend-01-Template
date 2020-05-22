@@ -23,6 +23,7 @@ module.exports.computeCSS = function computeCSS(element){
   
     //双数组的同时循环，看哪个先用尽
     for (const rule of rules) {
+        combinatorSelector(rule.selectors[0])
         const selectorParts = rule.selectors[0].split(" ").reverse()//reverse把“当前元素”的selector放在第一位
         if(!match(element,selectorParts[0])){//如果当前元素不匹配第一个selector，那就不用关了
             continue
@@ -120,6 +121,7 @@ function match(element,selector){
     if(!selector || !element.attributes){
         return false
     }
+    //combinatorSelector(selector)
     //如果是复合选择器，需要用正则或者状态机把它的每个部分拆开
     //如 main>div.a#id[attr=value] 拆成:
     //main> 检查父亲
@@ -142,6 +144,19 @@ function match(element,selector){
             return true
         }
     }
+}
+function combinatorSelector(selector){
+    const childSelector = /(\w+>)/
+    const idSelector = /((?<=#)\w+)/
+    const tagSelector = /((?<=!\.|#)\w+\W)/
+    const classSelector = /((?<=\.)\w+\W)/
+    const res = [];
+    [childSelector,idSelector,tagSelector,classSelector].map(check=>{
+        selector.match(check)
+        res.push(RegExp.$1)
+    })
+    // console.log('sel',selector)
+    // console.log('res',res)
 }
 //计算specificity
 function specificity(selectorInRule){
