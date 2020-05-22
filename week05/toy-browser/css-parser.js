@@ -79,9 +79,9 @@ module.exports.computeCSS = function computeCSS(element){
     }
 
     //这里可以判断inline style，并覆盖
-    let inlineStyle = element.attributes.filter(att=>(att.name  == 'style')) //找到inline-style的attraibute
-    const parsedInlinestyle = css.parse(`* {${inlineStyle[0]}}`)//用css-parser parse出rule:用* {} 套成一个css 样式
-    const inlineStyleps= [1,0,0,0]//定义inline style的sp是【1，0，0，0】
+    // let inlineStyle = element.attributes.filter(att=>(att.name  == 'style')) //找到inline-style的attraibute
+    // const parsedInlinestyle = css.parse(`* {${inlineStyle[0]}}`)//用css-parser parse出rule:用* {} 套成一个css 样式
+    // const inlineStyleps= [1,0,0,0]//定义inline style的sp是【1，0，0，0】
     //然后跟matched的代码差不多，以下
     // const sp = specificity(rule.selectors[0])
     //         const computedStyle = element.computedStyle
