@@ -1,6 +1,7 @@
 //Client就是toy browser的内容
 const net = require("net");
 const parser = require('./parser');
+const images = require('images')
 //用net的库，而不用http库来访问server，把需要的html拿回来，来实现浏览器；
 class ResponseParser{
     constructor(){
