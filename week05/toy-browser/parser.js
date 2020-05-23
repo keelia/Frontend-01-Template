@@ -1,4 +1,5 @@
 const cssParser = require('./css-parser');
+const {layout} = require('./layout');
 //文本节点的结束是文件结束作为标志的，但是目前这个分析器在没有遇到一个特殊标签之前，可能还会继续在补全字符的状态，所以没办法把最后的文本挂上去，
 //所以这里用symbol（symbol都是唯一的），把它作为特殊字符作为end，标示文件结尾。因为字符都有被占位，所以没办法放一个string进去，而是用symbol。
 //这是小技巧处理绝大多数匹配结尾的情况，有时如处理字符串时候也可能会需要一个标示结尾的东西，不一定是symbol。只要是唯一的东西都可以
@@ -325,8 +326,11 @@ function emit(token){ //提交我们生成的token
         if(!token.isSelfclosing){//不是自封闭标签的话，入栈
             stack.push(element)
         }
+
         currentTextNode = null
     }else if(token.type == 'endTag'){
+        //要在结束标签的位置计算layout，因为必须要拿到元素的子元素才可以layout
+        //实际浏览器中是需要根据属性元素的属性做不同的判断，如在正常流中，基本不需要在endtag的地方，在starttag的地方就可以layout
         if(top.tagName !== token.tagName){
             throw(new Error('Tag start end not match'))
         }else{
@@ -353,7 +357,7 @@ function emit(token){ //提交我们生成的token
                 // tagName: 'style',
                 cssParser.addCSSRules(top.children[0].content)
             }
-            
+            layout(top)
             stack.pop()//出栈
         }
         currentTextNode == null
