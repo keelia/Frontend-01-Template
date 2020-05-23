@@ -51,3 +51,12 @@ while(input){
     match('ababx','i am ababx!hahah');
 
 参考资料：wiki：fsm
+
+#浏览器工作原理：
+浏览器排版经历了3代
+float/clear
+display:inline/block
+
+flex
+
+grid
