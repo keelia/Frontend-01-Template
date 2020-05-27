@@ -2,7 +2,6 @@ module.exports.layout = function layout(element){
     if(!element.computedStyle){ //没有style的元素不作处理
         return
     }
-    console.log(element)
     const elementStyle = getStyle(element)
     if(elementStyle.display !== 'flex'){ //不是flex display的元素就不去处理 了
         return

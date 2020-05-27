@@ -362,7 +362,6 @@ function emit(token){ //提交我们生成的token
         }
         currentTextNode == null
     }else if(token.type == 'text'){
-        //console.log(JSON.stringify(token.content))
         if(currentTextNode == null){
             currentTextNode = {
                 type:'text',

@@ -2,6 +2,7 @@
 const net = require("net");
 const parser = require('./parser');
 const images = require('images')
+const render = require('./render')
 //用net的库，而不用http库来访问server，把需要的html拿回来，来实现浏览器；
 class ResponseParser{
     constructor(){
@@ -234,8 +235,10 @@ void async function(){
     })
     let response = await request.send()
     let dom = parser.parseHTML(response.body)
-    console.log(dom)
-    //console.log(dom.children[0].children[1].children[0])
+   // const tobeRender = dom.children[0].children[2].children[0].children[3]
+    let viewpoint = images(800,600) //viewpoint:多大的空间画图/浏览器的网页部分
+    render.render(viewpoint,dom)
+    viewpoint.save('viewpoint.jpg')
 }()
 
 
