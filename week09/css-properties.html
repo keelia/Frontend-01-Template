@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <style>
+        .card-header span.badge{
+            float: right;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="p-2 bg-primary text-white text-center">CSS Properties</h1>
+    <div class="container-fluid d-flex">
+        <section class="col-3">
+            <div class="card">
+                <div class="card-header">
+                    Layout<span class="badge badge-secondary" id="layoutNum"></span>
+                  </div>
+                  <div class="card-body p-0">
+                    <ul class="list-group" id="layout"></ul>
+                  </div>
+            </div>
+        </section>
+            
+        <section class="col-3">
+            <div class="card">
+                <div class="card-header">
+                    Interactive<span  class="badge badge-secondary" id="interactiveNum"></span>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group" id="interactive"> </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section class="col-3">
+            <div class="card">
+                <div class="card-header">
+                    Rendering<span  class="badge badge-secondary" id="renderingNum"></span>
+                  </div>
+                  <div class="card-body p-0">
+                    <ul class="list-group" id="rendering"></ul>
+                  </div>
+            </div>
+        </section>
+        
+        <section class="col-3">
+            <div class="card">
+                <div class="card-header">
+                    SVG<span  class="badge badge-secondary" id="svgNum"></span>
+                  </div>
+                  <div class="card-body p-0">
+                    <ul class="list-group" id="svg"> </ul>
+                  </div>
+            </div>
+        </section>
+    </div>
+
+</body>
+<script>
+    window.onload = ()=>{
+        console.log(getComputedStyle(document.body))
+        const totalPropsNum = getComputedStyle(document.body).length
+        const layoutProps = {
+            background:{
+                background:{
+                    JSSyntax:'background',
+                    shorthand:['background-color','background-image','background-position','background-size',
+                    'background-repeat','background-origin','background-clip','background-attachment']
+                },
+                'background-attachment':{ JSSyntax:'backgroundAttachment',},
+                'background-blend-mode':{
+                    JSSyntax:'backgroundBlendMode',
+                    support:'Edge/Internet Explorer do not support the background-blend-mode property',standardStatus:'CR'
+                },
+                'background-clip':{JSSyntax:'backgroundClip',},
+                'background-color':{JSSyntax:'backgroundColor',},
+                "background-image":{JSSyntax:'backgroundImage',},
+                "background-origin":{JSSyntax:'backgroundOrigin',},
+                "background-position":{JSSyntax:'backgroundPosition',},
+                "background-repeat":{JSSyntax:'backgroundRepeat',},
+                "background-size":{JSSyntax:'backgroundSize',},
+            },
+            print:{
+                'page-break-after':{JSSyntax:'pageBreakAfter'},
+                'page-break-before':{JSSyntax:'pageBreakBefore'},
+                'page-break-inside':{JSSyntax:'pageBreakInside'}
+            },
+            "break-after":{JSSyntax:'breakAfter'},
+            "break-before":{JSSyntax:'breakBefore'},
+            'break-inside':{JSSyntax:'breakInside'},
+            border:{
+                border:{JSSyntax:'border',shorthand:['border-width','border-style (required)','border-color']},
+                'border-bottom':{JSSyntax:'borderBottom',shorthand:['border-bottom-width','border-bottom-style(required)','border-bottom-color']},
+                "border-bottom-color":{JSSyntax:'borderBottomColor',},
+                "border-bottom-left-radius":{JSSyntax:'borderBottomLeftRadius',},
+                "border-bottom-right-radius":{JSSyntax:'borderBottomRightRadius',},
+                "border-bottom-style":{JSSyntax:'borderBottomStyle',},
+                "border-bottom-width":{JSSyntax:'borderBottomWidth',},
+                "border-color":{JSSyntax:'borderColor'},
+                "border-image":{JSSyntax:'borderImage',shorthand:['border-image-source','border-image-slice','border-image-width',
+                    'border-image-outset','border-image-repeat']},
+                "border-image-outset":{JSSyntax:'borderImageOutset',},
+                "border-image-repeat":{JSSyntax:'borderImageRepeat',},
+                "border-image-slice":{JSSyntax:'borderImageSlice',support:'Internet Explorer 10, and earlier versions, do not support the border-image-slice property',standardStatus:'CR'},
+                "border-image-source":{JSSyntax:'borderImageSource',},
+                "border-image-width":{JSSyntax:'borderImageWidth',},
+                'border-left':{JSSyntax:'borderLeft',shorthand:['border-left-width','border-left-style(required)','border-left-color']},
+                "border-left-color":{JSSyntax:'borderLeftColor',},
+                "border-left-style":{JSSyntax:'borderLeftStyle',},
+                "border-left-width":{JSSyntax:'borderLeftWidth',},
+                "border-radius":{JSSyntax:'borderRadius'},
+                'border-right':{JSSyntax:'borderRight',shorthand:['border-right-width','border-right-style(required)','border-right-color']},
+                "border-right-color":{JSSyntax:'borderRightColor',},
+                "border-right-style":{JSSyntax:'borderRightStyle',},
+                "border-right-width":{JSSyntax:'borderRightWidth',},
+                'border-top':{JSSyntax:'borderTop',shorthand:['border-top-width','border-top-style(required)','border-top-color']},
+                "border-top-color":{JSSyntax:'borderTopColor',},
+                "border-top-left-radius":{JSSyntax:'borderTopLeftRadius',},
+                "border-top-right-radius":{JSSyntax:'borderTopRightRadius',},
+                "border-top-style":{JSSyntax:'borderTopStyle',},
+                "border-top-width":{JSSyntax:'borderTopWidth',},
+                "border-style":{JSSyntax:'borderStyle'},
+                "border-width":{JSSyntax:'borderWidth'}
+            },
+            box:{
+                'box-shadow':{JSSyntax:'boxShadow',CSSSyntax:'box-shadow: none|h-offset v-offset blur spread color |inset|initial|inherit;'},
+                "box-sizing":{JSSyntax:'boxSizing',CSSSyntax:'box-sizing: content-box|border-box|initial|inherit;'}
+            },
+            'clear':{JSSyntax:'clear'},
+            'content':{JSSyntax:'You can not style a pseudo-class on a particular element, but you can get the same result by creating a class in your STYLE section (or stylesheet) and add that class to the specified element'},
+            column:{
+                'column-count':{JSSyntax:'columnCount'},
+                'column-fill':{JSSyntax:'columnFill'},
+                'column-gap':{JSSyntax:'columnGap'},
+                'column-rule':{JSSyntax:'columnRule',shorthand:['column-rule-width','column-rule-style (required)','column-rule-color']},
+                'column-rule-color':{JSSyntax:'columnRuleColor'},
+                'column-rule-style':{JSSyntax:'columnRuleStyle'},
+                'column-rule-width':{JSSyntax:'columnRuleWidth'},
+                'column-span':{JSSyntax:'columnSpan'},
+                'column-width':{JSSyntax:'columnWidth'},
+                'columns':{JSSyntax:'columns',shorthand:['column-width','column-count']}
+            },
+            display:{JSSyntax:'display',
+                    CSSSyntax:`[ <display-outside> || <display-inside> ] | <display-listitem> | <display-internal> | <display-box> | <display-legacy>
+                        <display-outside>  = block | inline | run-in
+                        <display-inside>   = flow | flow-root | table | flex | grid | ruby
+                        <display-listitem> = <display-outside>? && [ flow | flow-root ]? && list-item
+                        <display-internal> = table-row-group | table-header-group |  table-footer-group | table-row | table-cell |
+                                            table-column-group | table-column | table-caption |
+                                            ruby-base | ruby-text | ruby-base-container |
+                                            ruby-text-container
+                        <display-box>      = contents | none
+                        <display-legacy>   = inline-block | inline-table | inline-flex | inline-grid`, 
+            },
+            table:{
+                'empty-cells':{JSSyntax:'emptyCells',notes:'This property has no effect if border-collapse is "collapse"'},
+                "border-spacing":{JSSyntax:'borderSpacing',notes:'For table,sets the distance between the borders of adjacent cells'},
+                'caption-side':{JSSyntax:'captionSide',notes:'specifies the placement of a table caption.'},
+                "border-collapse":{notes:'For table borders',JSSyntax:'borderCollapse'},
+                "table-layout":{JSSyntax:'tableLayout'},
+            },
+            'float':{JSSyntax:'float'},
+            "image-orientation":{JSSyntax:'imageOrientation'},
+            "image-rendering":{JSSyntax:'imageRendering'},
+            "isolation":{JSSyntax:'isolation'},
+            grid:{
+                "grid":{JSSyntax:'grid',shorthand:['grid-template-rows','grid-template-columns','grid-template-areas','grid-auto-rows',
+                    'grid-auto-columns','grid-auto-flow']},
+                "grid-area":{JSSyntax:'gridArea',shorthand:['grid-row-start','grid-column-start','grid-row-end','grid-column-end']},
+                "grid-auto-columns":{JSSyntax:'gridAutoColumns'},
+                "grid-auto-flow":{JSSyntax:'gridAutoFlow'},
+                "grid-auto-rows":{JSSyntax:'gridAutoRows'},
+                "grid-column":{JSSyntax:'gridColumn',shorthand:['grid-column-start','grid-column-end']},
+                "grid-column-end":{JSSyntax:'gridColumnEnd'},
+                "grid-column-gap":{JSSyntax:'gridColumnGap'},
+                "grid-column-start":{JSSyntax:'gridColumnStart'},
+                "grid-gap":{JSSyntax:'gridGap',shorthand:['grid-row-gap','grid-column-gap']},
+                "grid-row":{JSSyntax:'gridRow',shorthand:['grid-row-start','grid-row-end']},
+                "grid-row-end":{JSSyntax:'gridRowEnd'},
+                "grid-row-gap":{JSSyntax:'gridRowGap'},
+                "row-gap":{JSSyntax:'rowGap',notes:'= grid-row-gap'},
+                "grid-row-start":{JSSyntax:'gridRowStart'},
+                "grid-template":{JSSyntax:'gridTemplate',shorthand:['grid-template-rows','grid-template-columns','grid-template-areas']},
+                "grid-template-areas":{JSSyntax:'gridTemplateAreas'},
+                "grid-template-columns":{JSSyntax:'gridTemplateColumns'},
+                "grid-template-rows":{JSSyntax:'gridTemplateRows'}
+            },
+            flex:{
+                "flex":{JSSyntax:'flex',shorthand:['flex-grow','flex-shrink','flex-basis'],notes:'If the element is not a flexible item, the flex property has no effect.'},
+                "justify-items":{JSSyntax:'justifyItems',standardStatus:'WD'},
+                "justify-self":{JSSyntax:'justifySelf',standardStatus:'WD'},
+                "align-content":{JSSyntax:'alignContent',notes:'There must be multiple lines of items for this property to have any effect!'},
+                "align-items":{JSSyntax:'alignItems',notes:'Use the align-self property of each item to override the align-items property.'},
+                "align-self":{JSSyntax:'alignSelf',notes:'The align-self property overrides the flexible container\'s align-items property.'},
+                "flex-basis":{JSSyntax:'flexBasis',notes:'If the element is not a flexible item, the flex-basis property has no effect.'},
+                "flex-flow":{JSSyntax:'flexFlow',shorthand:['flex-direction','flex-wrap']},
+                "flex-grow":{JSSyntax:'flexGrow',notes:'If the element is not a flexible item, the flex-grow property has no effect.'},
+                "flex-shrink":{JSSyntax:'flexShrink',notes:'If the element is not a flexible item, the flex-shrink property has no effect.'},
+                "flex-direction":{JSSyntax:'flexDirection',notes:' If the element is not a flexible item, the flex-direction property has no effect.'},
+                "flex-wrap":{JSSyntax:'flexWrap',notes:'If the elements are not flexible items, the flex-wrap property has no effect.'},
+                "justify-content":{JSSyntax:'justifyContent',notes:'Use the align-items property to align the items vertically.'},
+                "order":{JSSyntax:'order'}
+            },
+            "alignment-baseline":{JSSyntax:'alignmentBaseline',support:'unknown',
+                notes:'Applies to:	inline-level boxes, flex items, grid items, table cells',standardStatus:'WD',notes:'https://www.w3.org/TR/css-inline-3/#propdef-alignment-baseline'},
+            position:{
+                "position":{JSSyntax:'position',value:"static|absolute|fixed|relative|sticky|initial|inherit;",notes:'The sticky value is not supported in Internet Explorer or Edge 15 and earlier versions.'},
+                "left":{JSSyntax:'bottom'},
+                "right":{JSSyntax:'right'},
+                "top":{JSSyntax:'top'},
+                'bottom':{JSSyntax:'bottom'},
+            },
+            "3D-positioned":{
+                "perspective":{JSSyntax:'perspective'},
+                "perspective-origin":{JSSyntax:'perspectiveOrigin'},
+            },
+            size:{
+                "height":{JSSyntax:'height'},
+                "width":{JSSyntax:'width'},
+                "max-height":{JSSyntax:'maxHeight'},
+                "max-width":{JSSyntax:'maxWidth'},
+                "min-height":{JSSyntax:'minHeight'},
+                "min-width":{JSSyntax:'minWidth'},
+                "resize":{JSSyntax:'resize',support:'Internet Explorer and Edge does not support the resize property.', notes:' The resize property does not apply to inline elements or to block elements where overflow="visible". So, make sure that overflow is set to "scroll", "auto", or "hidden".'}
+            },
+            "letter-spacing":{JSSyntax:'letterSpacing'},
+            "line-height":{JSSyntax:'lineHeight'},
+            "list-style":{JSSyntax:'listStyle',shorthand:['list-style-type','list-style-position','list-style-image']},
+            "list-style-image":{JSSyntax:'listStyleImage',},
+            "list-style-position":{JSSyntax:'listStylePosition',value:'inside|outside|initial|inherit;'},
+            "list-style-type":{JSSyntax:'listStyleType'},
+            margin:{
+                margin:{JSSyntax:'margin'},
+                "margin-bottom":{JSSyntax:'marginBottom'},
+                "margin-left":{JSSyntax:'marginLeft'},
+                "margin-right":{JSSyntax:'marginRight'},
+                "margin-top":{JSSyntax:'marginTop'},
+            },
+            padding:{
+                padding:{JSSyntax:'padding'},
+                "padding-bottom":{JSSyntax:'paddingBottom'},
+                "padding-left":{JSSyntax:'paddingLeft'},
+                "padding-right":{JSSyntax:'paddingRight'},
+                "padding-top":{JSSyntax:'paddingTop'},
+            },
+            "object-fit":{JSSyntax:'objectFit'},
+            "object-position":{JSSyntax:'objectPosition'},
+            "orphans":{JSSyntax:'orphans'},
+            outline:{
+                outline:{JSSyntax:'outline',shorthand:['outline-width','outline-style (required)','outline-color'], notes:'The outline is not a part of the element\'s dimensions, therefore the element\'s width and height properties do not contain the width of the outline'},
+                "outline-color":{JSSyntax:'outlineColor'},
+                "outline-offset":{JSSyntax:'outlineOffset'},
+                "outline-style":{JSSyntax:'outlineStyle'},
+                "outline-width":{JSSyntax:'outlineWidth'},
+            },
+            overflow:{
+                overflow:{JSSyntax:'overflow',value:'visible|hidden|scroll|auto|initial|inherit;',},
+                "overflow-anchor":{JSSyntax:'overflowAnchor',standardStatus:'ED'},
+                "overflow-wrap":{JSSyntax:'overflowWrap',standardStatus:'WD',support:'Not supports IE/Safari'},
+                "overflow-x":{JSSyntax:'overflowX'},
+                "overflow-y":{JSSyntax:'overflowY'},
+            },
+            "tab-size":{JSSyntax:'tabSize',support:' Firefox supports an alternative, the -moz-tab-size property. Opera 10.6 to 12.1 also supports an alternative, the -o-tab-size property.', notes:'In HTML, the tab character is usually displayed as a single space-character, except for some elements, like \u003c textarea \u003e and \u003c pre \u003e, and the result of the tab-size property will only be visible for those elements.'},
+            CSSText:{
+                "text-align":{JSSyntax:'textAlign'},
+                "text-align-last":{JSSyntax:'textAlignLast'},
+                "text-decoration":{JSSyntax:'textDecoration',shorthand:['text-decoration-line (required)','text-decoration-color','text-decoration-style']},
+                "text-decoration-line":{JSSyntax:'textDecorationLine'},
+                "text-decoration-style":{JSSyntax:'textDecorationStyle'},
+                "text-decoration-color":{JSSyntax:'textDecorationColor'},
+                "text-decoration-skip-ink":{JSSyntax:'textDecorationSkipInk'},
+                "text-underline-position":{JSSyntax:'textUnderlinePosition'},
+                "text-indent":{JSSyntax:'textIndent'},
+                "text-rendering":{JSSyntax:'textRendering'},
+                "text-shadow":{JSSyntax:'textShadow'},
+                "text-size-adjust":{JSSyntax:'textSizeAdjust',standardStatus:'ED'},
+                "text-overflow":{JSSyntax:'textOverflow'},
+                "text-transform":{JSSyntax:'textTransform'},
+                "text-justify":{JSSyntax:'textJustify'},
+                "quotes":{JSSyntax:'quotes'},
+                "hyphens":{JSSyntax:'hyphens'},
+                direction:{JSSyntax:'direction'},
+                "unicode-bidi":{JSSyntax:'unicodeBidi',notes:'is used together with the direction property to set or return whether the text should be overridden to support multiple languages in the same document'},
+                "user-select":{JSSyntax:'userSelect',notes:'specifies whether the text of an element can be selected.'},
+                "word-break":{JSSyntax:'wordBreak'},
+                "word-spacing":{JSSyntax:'wordSpacing'},
+                "word-wrap":{JSSyntax:'wordWrap'},
+                "writing-mode":{JSSyntax:'writingMode'},
+                "line-break":{JSSyntax:'lineBreak',notes:'how to break lines of Chinese, Japanese, or Korean (CJK) text when working with punctuation and symbols'},
+            },
+            "vertical-align":{JSSyntax:'verticalAlign'},
+            "white-space":{JSSyntax:'whiteSpace'},
+            "z-index":{JSSyntax:'zIndex'},
+            "widows":{JSSyntax:'widows',notes:'sets the minimum number of lines in a block container that must be shown at the top of a page, region, or column.'},
+            "shape-outside":{
+                "shape-outside":{JSSyntax:'shapeOutside'},
+                "shape-image-threshold":{JSSyntax:'shapeImageThreshold'},
+                "shape-margin":{JSSyntax:'shapeMargin'},
+            },
+        }, interactiveProps = {
+            animation:{
+                "animation":{JSSyntax:'animation',shorthand:['animation-name', 'animation-duration', 'animation-timing-function',
+                    'animation-delay', 'animation-iteration-count', 'animation-direction', 'animation-fill-mode', 'animation-play-state']},
+                "animation-delay":{JSSyntax:'animationDelay',},
+                "animation-direction":{JSSyntax:'animationDirection',},
+                "animation-duration":{JSSyntax:'animationDuration',},
+                "animation-fill-mode":{JSSyntax:'animationFillMode',
+                    support:' The animation-fill-mode property is not supported in Internet Explorer 9 and earlier versions.',standardStatus:'WD'},
+                "animation-iteration-count":{JSSyntax:'animationIterationCount',},
+                "animation-name":{JSSyntax:'animationName',},
+                "animation-play-state":{JSSyntax:'animationPlayState',},
+                "animation-timing-function":{JSSyntax:'animationTimingFunction',},
+            },
+            transition:{
+                transition:{JSSyntax:'transition',shorthand:['transition-property','transition-duration','transition-timing-function','transition-delay']},
+                "transition-delay":{JSSyntax:'transitionDelay'},
+                "transition-duration":{JSSyntax:'transitionDuration'},
+                "transition-property":{JSSyntax:'transitionProperty'},
+                "transition-timing-function":{JSSyntax:'transitionTimingFunction'},
+            },
+            transform:{
+                transform:{JSSyntax:'transform',value:`none | matrix(n,n,n,n,n,n) | matrix3d(n,n,n,n,n,n,n,n,n,n,n,n,n,n,n,n) | translate(x,y) | translate3d(x,y,z)
+                                                        | translateX(x)| translateY(y)	|translateZ(z) |scale(x,y) |scale3d(x,y,z)	Defines a 3D scale transformation	
+                                                    scaleX(x) |	scaleY(y) |scaleZ(z) |rotate(angle) | rotate3d(x,y,z,angle) | rotateX(angle) | rotateY(angle)|	
+                                                    rotateZ(angle)| skew(x-angle,y-angle)|skewX(angle) | skewY(angle)| perspective(n)| initial|inherit`},
+                "transform-origin":{JSSyntax:'transformOrigin', notes:'This property must be used together with the transform property.'},
+                "transform-style":{JSSyntax:'transformStyle',value:'flat|preserve-3d|initial|inherit;'}
+            },
+            "offset-distance":{JSSyntax:'offsetDistance'},
+            "offset-path":{JSSyntax:'offsetPath'},
+            "offset-rotate":{JSSyntax:'offsetRotate'},
+            "will-change":{JSSyntax:'willChange'},
+            'cursor':{JSSyntax:'cursor'},
+            "pointer-events":{JSSyntax:'pointerEvents'},
+            "touch-action":{JSSyntax:'touchAction'},
+            "speak":{JSSyntax:'speak',notes:'for specifying if a browser should speak the content it reads, such as through a screen reader'},
+            "zoom":{JSSyntax:'zoom',notes:'sets the initial zoom factor of a document defined by the @viewport at-rule'},
+            "scroll-behavior":{JSSyntax:'scrollBehavior',notes:' The scroll-behavior property is not supported in Internet Explorer.'},
+        };const renderProps = {
+            'caret-color':{JSSyntax:'caretColor',
+                standardStatus:'REC',
+                support:'Edge and Safari 10 and earlier do not support the caret-color property.',
+                notes:' specifies the color of the cursor (caret) in inputs, textareas, or any element that is editable'},
+            'color':{JSSyntax:'color'},
+            'clip':{JSSyntax:'clip',notes:'The clip property does not work if "overflow:visible".The clip property is deprecated and will be replaced by the clip-path property in the future.'},
+            "clip-path":{JSSyntax:'clipPath',notes:' The clip-path property will replace the deprecated clip property.'},
+            'font':{
+                'font':{JSSyntax:'font',shorthand:['font-style','font-variant','font-weight','font-size/line-height','font-family']},
+                "font-family":{JSSyntax:'fontFamily'},
+                "font-kerning":{JSSyntax:'fontKerning'},
+                "font-feature-settings":{
+                    JSSyntax:'fontFeatureSettings',
+                    support:' Internet Explorer 9 and earlier versions do not support the font-feature-settings property.',standardStatus:'CR'},
+                "font-optical-sizing":{JSSyntax:'fontOpticalSizing',standardStatus:'WD'},
+                "font-size":{JSSyntax:'fontSize'},
+                "font-stretch":{JSSyntax:'fontStretch',notes:'This property has no effect if the selected font does not offer condensed or expanded faces!'},
+                "font-style":{JSSyntax:'fontStyle'},
+                "font-variant":{JSSyntax:'fontVariant'},
+                "font-variant-ligatures":{JSSyntax:'fontVariantLigatures', standardStatus:'CR'},
+                "font-variant-caps":{JSSyntax:'fontVariantCaps',support:' Edge and Safari do not support the font-variant-caps property.',standardStatus:'CR'},
+                "font-variant-numeric":{JSSyntax:'fontVariantNumeric',standardStatus:'CR'},
+                "font-variant-east-asian":{JSSyntax:'fontVariantEastAsian',standardStatus:'CR'},
+                "font-variation-settings":{JSSyntax:'fontVariationSettings',standardStatus:'WD'},
+                "font-weight":{JSSyntax:'fontWeight'}
+            },
+            "mix-blend-mode":{JSSyntax:'mixBlendMode'},
+            "opacity":{JSSyntax:'opacity',notes:'When using the opacity property to add transparency to the background of an element, all of its child elements become transparent as well. This can make the text inside a fully transparent element hard to read. If you do not want to apply opacity to child elements, use RGBA color values instead'},
+            "visibility":{JSSyntax:'visibility'},
+            "backface-visibility":{JSSyntax:'backfaceVisibility',notes:'The backface-visibility property is not supported in Internet Explorer 9 and earlier versions. Safari supports it with a webkit prefix'},
+            "backdrop-filter":{JSSyntax:'backdropFilter'},
+            "paint-order":{JSSyntax:'paintOrder'},
+            "filter":{JSSyntax:'filter'}
+        }, otherProps = {
+            
+        }, svgProps = {
+            "mask":{JSSyntax:'mask'},
+            "mask-type":{JSSyntax:'maskType'},
+            "marker-end":{JSSyntax:'markerEnd'},
+            "marker-mid":{JSSyntax:'markerMid'},
+            "marker-start":{JSSyntax:'markerStart'},
+            "text-anchor":{JSSyntax:'textAnchor',support:'unknown'},
+            "buffered-rendering":{JSSyntax:'bufferedRendering',notes:'https://www.w3.org/TR/SVGTiny12/painting.html#BufferedRenderingProperty'},
+            "shape-rendering":{JSSyntax:'shapeRendering'},
+            "baseline-shift":{JSSyntax:'baselineShift'},
+            "vector-effect":{JSSyntax:'vectorEffect'},
+            "dominant-baseline":{JSSyntax:'dominantBaseline'},
+            "stroke":{
+                "stroke":{JSSyntax:'stroke'},
+                "stroke-dasharray":{JSSyntax:'strokeDasharray'},
+                "stroke-dashoffset":{JSSyntax:'strokeDashoffset'},
+                "stroke-linecap":{JSSyntax:'strokeLinecap'},
+                "stroke-linejoin":{JSSyntax:'strokeLinejoin'},
+                "stroke-miterlimit":{JSSyntax:'strokeMiterlimit'},
+                "stroke-opacity":{JSSyntax:'strokeOpacity'},
+                "stroke-width":{JSSyntax:'strokeWidth'},
+            },
+            "flood-color":{JSSyntax:'floodColor'},
+            "flood-opacity":{JSSyntax:'floodOpacity'},
+            "lighting-color":{JSSyntax:'lightingColor'},
+            "stop-color":{JSSyntax:'stopColor'},
+            "stop-opacity":{JSSyntax:'stopOpacity'},
+            "color-interpolation":{JSSyntax:'colorInterpolation'},
+            "color-interpolation-filters":{JSSyntax:'colorInterpolationFilters'},
+            "color-rendering":{JSSyntax:'colorRendering',isObsolete:true},
+            "clip-rule":{JSSyntax:'clipRule',notes:'only applies to graphics elements that are contained within a <clipPath> element'},
+            "fill":{JSSyntax:'fill'},
+            "fill-opacity":{JSSyntax:'fillOpacity'},
+            "fill-rule":{JSSyntax:'fillRule'},
+            "d":{JSSyntax:'d',notes:'defines a path to be drawn'},
+            "cx":{JSSyntax:'cx',notes:'define the x-axis coordinate of a center point.'},
+            "cy":{JSSyntax:'cy',notes:'define the y-axis coordinate of a center point'},
+            "x":{JSSyntax:'x',notes:'defines a x-axis coordinate in the user coordinate system.'},
+            "y":{JSSyntax:'y',notes:'defines a y-axis coordinate in the user coordinate system.'},
+            "r":{JSSyntax:'r',notes:'defines the radius of a circle.'},
+            "rx":{JSSyntax:'rx',notes:'a radius on the x-axis'},
+            "ry":{JSSyntax:'ry',notes:'a radius on the y-axis'},
+        }
+        //put props on DOM
+        const layoutList = document.getElementById('layout'),interactiveList = document.getElementById('interactive'),
+        renderingList = document.getElementById('rendering'),svgList = document.getElementById('svg')
+        const layoutNum = document.getElementById('layoutNum'),interactiveNum = document.getElementById('interactiveNum'),
+        renderingNum = document.getElementById('renderingNum'),svgNum = document.getElementById('svgNum')
+        const attachPropToList = (prop,listEl)=>{
+            const liEl = document.createElement('li')
+            liEl.setAttribute('class','list-group-item css-prop-item')
+            //check if prop has chilcProp
+            const hasChild = !Object.keys(prop).some(key=>Object.keys(prop[key]).some(k=>k=== 'JSSyntax'))
+            if(hasChild){
+                //console.log(prop,Object.keys(prop))
+                listEl.setAttribute('class','list-group list-group-flush')
+                Object.keys(prop).map(key=>{
+                    const title = document.createElement('div')
+                    title.innerText = key
+                    liEl.appendChild(title)
+                    const subList = document.createElement('ul')
+                    subList.setAttribute('class','list-group')
+                    subList.innerHTML = `${Object.keys(prop[key]).map(k=>{
+                        const hasStandardStatus = Object.keys(prop[key][k]).some(_k =>_k ==='standardStatus')
+                        const standardStatus = hasStandardStatus ?  prop[key][k]['standardStatus']:void 0
+                        return `<li class="list-group-item css-prop-item"><div class="clearfix"><span class="badge badge-primary float-left">${k}</span><span class="badge badge-info float-right">${standardStatus||''}</span></div><ul class="list-group list-group-flush">${Object.keys(prop[key][k]).filter(itemKey=>itemKey!=='standardStatus').map(itemKey=>{
+                            let text = prop[key][k][itemKey]
+                            if(Array.isArray(text)){
+                                text = text.map(t=>`<p style="font-size:14px" class="m-0 text-secondary">${t}</p>`).join('')
+                            }else{
+                                text = `<p style="font-size:14px" class="text-secondary">${text}</p>`
+                            }
+                            return `<li class="list-group-item pb-0"><p class="font-weight-bold text-capitalize mb-0" style="font-size:10px">${itemKey}:</p>${text}</li>`}).join('')}</ul></li>`
+                    }).join('')}`
+                   // console.log(standardStatus)
+                    liEl.appendChild(subList)
+                })
+            }else{
+                liEl.setAttribute('id',Object.keys(prop)[0])
+                liEl.innerHTML = Object.keys(prop).map(key=>{
+                    const hasStandardStatus = Object.keys(prop[key]).some(k =>k ==='standardStatus')
+                    const standardStatus = hasStandardStatus ?  prop[key]['standardStatus']:void 0
+                    return `<div class="clearfix"><span class="badge badge-primary float-left">${key}</span><span class="badge badge-info float-right">${standardStatus||''}</span></div>
+                    <ul class="list-group list-group-flush">${Object.keys(prop[key]).filter(k=>k!=='standardStatus').map(k=>{
+                        let text =prop[key][k]
+                        if(Array.isArray(text)){
+                            text = text.map(t=>`<p style="font-size:14px" class="m-0 text-secondary">${t}</p>`).join('')
+                        }else{
+                            text = `<p style="font-size:14px" class="text-secondary">${text}</p>`
+                        }
+                        return `<li class="list-group-item pb-0"><p class="font-weight-bold text-capitalize mb-0" style="font-size:10px">${k}:</p>${text}</li>`}).join('')}</ul>`
+                }).join('')
+            }
+            listEl.appendChild(liEl)
+        }
+        Object.keys(layoutProps).map(key=>{
+            const p = {}
+            p[key]=layoutProps[key]
+            attachPropToList(p,layoutList)
+        })
+        Object.keys(interactiveProps).map(key=>{
+            const p = {}
+            p[key]=interactiveProps[key]
+            attachPropToList(p,interactiveList)
+        })
+        Object.keys(renderProps).map(key=>{
+            const p = {}
+            p[key]=renderProps[key]
+            attachPropToList(p,renderingList)
+        })
+        Object.keys(svgProps).map(key=>{
+            const p = {}
+            p[key]=svgProps[key]
+            attachPropToList(p,svgList)
+        })
+        layoutNum.innerText = layoutList.getElementsByClassName('css-prop-item').length
+        renderingNum.innerText = renderingList.getElementsByClassName('css-prop-item').length
+        interactiveNum.innerText = interactiveList.getElementsByClassName('css-prop-item').length
+        svgNum.innerText = svgList.getElementsByClassName('css-prop-item').length
+    }
+</script>
