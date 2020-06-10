@@ -570,6 +570,7 @@ void async function(){
     for (const standard of standards) {
         iframe.src = standard.url
         console.log(standard.name)
-        await happen(iframe,'load')
+		await happen(iframe,'load')
+		console.log(iframe.contentDocument.body)
     }
 }()
