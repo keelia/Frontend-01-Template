@@ -1,0 +1,27 @@
+<div>
+    <div style="width: 100px;height:100px;background-color: pink;margin: 20px;"></div>
+    <div style="width: 100px;height:100px;background-color: pink;margin: 20px;"></div>
+    <div style="width: 100px;height:100px;background-color: pink;margin: 20px;"></div>
+    <div style="display: flex;">
+        <!--margin-top也是div要求的留白,里面这个子元素的margin-top跟div-container的margin-top产生了同向的margin collapse-->
+         <!--只要这个里面的元素margin不超过30，那么div-container的margin就是30,如果里面的margin:40px，就会被撑高-->
+        <div style="width: 100px;height:100px;background-color: pink;margin: 20px;"></div>
+        <div style="width: 100px;height:100px;background-color: pink;margin: 20px;"></div>
+        <div style="width: 100px;height:100px;background-color: pink;margin: 20px;"></div>
+    </div>
+
+    <!--overflow:visible，那么它的bfc会跟它的父亲合并,这个div就跟不存在一样，div里面的元素跟外面的元素产生了margin collapse-->
+    <div style="overflow: visible;margin-top: 30px;">
+        <!--margin-top也是div要求的留白,里面这个子元素的margin-top跟div-container的margin-top产生了同向的margin collapse-->
+         <!--只要这个里面的元素margin不超过30，那么div-container的margin就是30,如果里面的margin:40px，就会被撑高-->
+        <div style="width: 100px;height:100px;background-color: pink;margin: 20px;"></div>
+        <div style="width: 100px;height:100px;background-color: pink;margin: 20px;"></div>
+        <div style="width: 100px;height:100px;background-color: pink;margin: 20px;"></div>
+    </div>
+    <!--但是over-flow:hidden；之后里面的元素跟外面这个div又不产生同向margin collapse了-->
+    <div style="overflow: hidden;margin-top: 30px;">
+        <div style="width: 100px;height:100px;background-color: pink;margin: 40px;"></div>
+        <div style="width: 100px;height:100px;background-color: pink;margin: 20px;"></div>
+        <div style="width: 100px;height:100px;background-color: pink;margin: 20px;"></div>
+    </div>
+</div>

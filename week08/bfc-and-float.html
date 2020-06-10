@@ -1,0 +1,26 @@
+<div style="height: 500px;background-color: lightgreen;">
+    <div style="float: right;width: 100px;height: 100px;background-color: aqua;margin: 20px;"></div>
+    <!--他是个inline的block，因为有了overflow:hidden，它自己产生了新的bfc,因此它会沾满整行，因为有float元素，所以这一行的宽度会只到float，所以它这一行沾满直到float元素为止-->
+    <div style="background-color: pink;overflow: hidden;">
+        <div style="width: 100px;height: 100px;background-color: blue;margin: 20px;"></div>
+        文字 文字 文字 文字
+        文字 文字 文字 文字
+        文字 文字 文字 文字
+        文字 文字 文字 文字
+        文字 文字 文字 文字
+        文字 文字 文字 文字
+        文字 文字 文字 文字
+        文字 文字 文字 文字
+        文字 文字 文字 文字
+        文字 文字 文字 文字
+        文字 文字 文字 文字
+        文字 文字 文字 文字
+        文字 文字 文字 文字
+        文字 文字 文字 文字
+        文字 文字 文字 文字
+        文字 文字 文字 文字
+        文字 文字 文字 文字
+        文字 文字 文字 文字
+    </div>
+     <!--但如果把overflow:hidden去掉了，它的bfc就是父亲的bfc，bfc合并了。它的宽度就是父亲的宽度。它里面的东西，会顶到float元素身上去。这时候它的文字元素被拆成了单个的行盒，所以会绕着float排布-->
+</div>
