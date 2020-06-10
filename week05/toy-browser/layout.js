@@ -351,6 +351,7 @@ module.exports.layout = function layout(element){
     //console.log(items)
 }
 
+//这个函数也可以根据盒模型把layout-width（考虑了margin的）算出来
 function getStyle(element){
     //console.log('get style from ',element.computedStyle)
     if(!element.style){
