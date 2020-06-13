@@ -8,31 +8,34 @@ const server = http.createServer((req, res) => {
     res.end(
 `<html maaa=a>
   <head><style>
-      body div #myid{
-          background-color: #ff5000;
-      }
-      body div img{
-          width:30px;
-          background-color: #ff1111;
-      }
       #container{
         width:500px;
         height:300px;
         display:flex;
-        background-color: rgb(255,255,255);
+        background-color: rgb(255,192,203);
       }
-      #container #myid{
-        width:200px;
+      div#container div{
+        width:100px;
         height:100px;
-        background-color: rgb(255,0,255);
       }
-      #container .c1{
+      div#container>div#myid{
+        background-color: rgb(127,255,212);
+      }
+      div#container div.c1{
         flex:1;
-        background-color: rgb(0,0,255);
+        height:100px;
+        background-color: rgb(255,255,224);
       }
+      div#container>div[data-set=purple]{
+        width:150px;
+        height:130px;
+        background-color: rgb(147,112,219);
+      }
+      
   </style></head>
   <body><div id="container">
     <div id="myid"></div>
+    <div data-set="purple"></div>
     <div class="c1"></div>
   </div></body>
 </html>`
@@ -40,4 +43,3 @@ const server = http.createServer((req, res) => {
   });
 
 server.listen(8088)
-// <img  class="second-img"/>
