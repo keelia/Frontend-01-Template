@@ -266,11 +266,26 @@ function combinatorSelector(element,selector){
         attrPass = attr && attr.value.attrValue === attrPart.attrValue
     }
     //parent check
+    let parentTagPass=true,parentIdPass=true, parentClassPass=true,parentAttrPass=true
     if(parent.tagPart.length>0){
-        parentPass = element.parent && element.parent.tagName === parent.tagPart
+        parentTagPass = element.parent && element.parent.tagName === parent.tagPart
     }
+    if(parent.classPart.length>0){
+        const attr = element.parents.attributes.filter(att=>(att.name  == 'attr') && (att.value.attrName == 'class'))[0]
+        const classes = attr && attr.value.attrValue ? attr.value.attrValue.split(" ") : []
+        parentClassPass = !!classes.some(cls=>cls.replace(' ','')== parent.classPart)
+    }
+    if(parent.idPart.length>0){
+        const attr = element.parent.attributes.filter(att=>(att.name  == 'attr') && (att.value.attrName == 'id'))[0]
+        parentIdPass = !!(attr && attr.value.attrValue == parent.idPart)
+    }
+    if(parent.attrPart.attrProp.length>0){
+        const attr = element.parent.attributes.filter(att=>(att.name  == 'attr') && (att.value.attrName == attrPart.attrProp))[0]
+        parentAttrPass = attr && attr.value.attrValue === parent.attrPart.attrValue
+    }
+    parentPass = parentTagPass && parentIdPass && parentClassPass && parentAttrPass
    //console.log('id:',idPart,idPass,'tag:',tagPart,tagPass,'cls:',classPart,classPass,'attr',attrPart,'parent:',parent)
-    return tagPass && idPass && classPass && attrPass
+    return tagPass && idPass && classPass && attrPass && parentPass
 }
 //计算specificity
 function specificity(selectorInRule){
