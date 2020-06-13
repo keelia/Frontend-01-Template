@@ -11,6 +11,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
+            "runtimeVersion": "10.20.1",
             "program": "${workspaceFolder}/toy-browser/client.js"
         }
     ]
