@@ -23,7 +23,6 @@ module.exports.computeCSS = function computeCSS(element){
   
     //双数组的同时循环，看哪个先用尽
     for (const rule of rules) {
-        combinatorSelector(rule.selectors[0])
         const selectorParts = rule.selectors[0].split(" ").reverse()//reverse把“当前元素”的selector放在第一位
         if(!match(element,selectorParts[0])){//如果当前元素不匹配第一个selector，那就不用关了
             continue
@@ -117,11 +116,10 @@ module.exports.computeCSS = function computeCSS(element){
 }
 
 function match(element,selector){
-    //console.log(element.tagName,selector)
     if(!selector || !element.attributes){
         return false
     }
-    //combinatorSelector(selector)
+    return combinatorSelector(element,selector)
     //如果是复合选择器，需要用正则或者状态机把它的每个部分拆开
     //如 main>div.a#id[attr=value] 拆成:
     //main> 检查父亲
@@ -129,34 +127,150 @@ function match(element,selector){
     //.a
     //#id
     //[attr=value]
-    if(selector.charAt(0) == "#"){
-        const attr = element.attributes.filter(att=>(att.name  == 'attr') && (att.value.attrName == 'id'))[0]
-        return attr && attr.value.attrValue == selector.substr(1)
+}
+function combinatorSelector(element,selector){
+   // console.log('selector',selector)
+    // console.log('res',res)
+    let idPart ='',tagPart = '',classPart = '',attrPart = {
+        attrProp:'',
+        attrValue:''
+    },parent = {
+        tagPart:'',
+        classPart:'',
+        attrPart: {
+            attrProp:'',
+            attrValue:''
+        },
+        idPart:''
+    }
+    let state = start;
+    let currentFilling = true
+    if(selector.includes('>')){
+        const [parentS,currentS] = selector.split('>')
+        for(let c of currentS){
+            state = state(c)
+        }
+        currentFilling = false
+        state = start
+        for(let c of parentS){
+            state = state(c)
+        }
+    }else{
+        let state = start
+        for(let c of selector){
+            state = state(c)
+        }
+    }
+    
+   
+    function start(c){
+        if(c === "#"){
+            return idState
+        }else if(c === "."){
+            return classState
+        }else if(c==='['){
+            return attrProp
+        }else if(/[a-zA-Z]/.test(c)){
+            return tagState(c)
+        }
+        return end(c)
+    }
 
-    }else if(selector.charAt(0) == "."){
+    function idState(c){
+        if(/[a-zA-Z0-9-_]/.test(c)){
+            if(currentFilling){
+                idPart+=c
+            }else{
+                parent.idPart+=c
+            }
+            return idState
+        }else{
+            return start(c)
+        }
+    }
+
+    function classState(c){
+        if(/[a-zA-Z0-9-_]/.test(c)){
+            if(currentFilling){
+                classPart+=c
+            }else{
+                parent.classPart+=c
+            }
+            return classState
+        }else{
+            return start(c)
+        }
+    }
+
+    function tagState(c){
+        if(/[a-zA-Z]/.test(c)){
+            if(currentFilling){
+                tagPart+=c
+            }else{
+                parent.tagPart+=c
+            }
+            return tagState
+        }else{
+            return start(c)
+        }
+    }
+
+    function attrProp(c){
+        if(c!=='='){
+            if(currentFilling){
+                attrPart.attrProp+=c
+            }else{
+                parent.attrPart.attrProp+=c
+            }
+            return attrProp
+        }else{
+            return attrValue
+        }
+    }
+
+    function attrValue(c){
+        if(c!==']'){
+            if(currentFilling){
+                attrPart.attrValue+=c
+            }else{
+                parent.attrPart.attrValue+=c
+            }
+            
+            return attrValue
+        }else{
+            return start
+        }
+    }
+    function end(c){
+        return end
+    }
+
+    let tagPass=true,idPass=true,classPass=true,parentPass=true,attrPass=true;
+    if(tagPart.length>0){
+        //check element has tag or not
+        tagPass = element.tagName === tagPart
+    }
+    if(classPart.length>0){
         const attr = element.attributes.filter(att=>(att.name  == 'attr') && (att.value.attrName == 'class'))[0]
         //class-attr的attrValue理论上是空格分隔的，所以应该用循环遍历class来判断
         //实现空格分隔的class选择器
         const classes = attr && attr.value.attrValue ? attr.value.attrValue.split(" ") : []
-        return classes.some(cls=>cls.replace(' ','')== selector.substr(1))
-    }else{//tagName
-        if(element.tagName == selector){
-            return true
-        }
+        classPass = !!classes.some(cls=>cls.replace(' ','')== classPart)
     }
-}
-function combinatorSelector(selector){
-    const childSelector = /(\w+>)/
-    const idSelector = /((?<=#)\w+)/
-    const tagSelector = /((?<=!\.|#)\w+\W)/
-    const classSelector = /((?<=\.)\w+\W)/
-    const res = [];
-    [childSelector,idSelector,tagSelector,classSelector].map(check=>{
-        selector.match(check)
-        res.push(RegExp.$1)
-    })
-    // console.log('sel',selector)
-    // console.log('res',res)
+    if(idPart.length>0){
+        const attr = element.attributes.filter(att=>(att.name  == 'attr') && (att.value.attrName == 'id'))[0]
+        idPass = !!(attr && attr.value.attrValue == idPart)
+    }
+    if(attrPart.attrProp.length>0){
+        const attr = element.attributes.filter(att=>(att.name  == 'attr') && (att.value.attrName == attrPart.attrProp))[0]
+        attrPass = attr && attr.value.attrValue === attrPart.attrValue
+    }
+    //parent check
+    if(parent.tagPart.length>0){
+        parentPass = element.parent && element.parent.tagName === parent.tagPart
+    }
+   //console.log('id:',idPart,idPass,'tag:',tagPart,tagPass,'cls:',classPart,classPass,'attr',attrPart,'parent:',parent)
+    return tagPass && idPass && classPass && attrPass
 }
 //计算specificity
 function specificity(selectorInRule){
