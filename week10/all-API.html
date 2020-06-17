@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Web APIs</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    </head>
+    <body class="jumbotron jumbotron-fluid">
+        <article class="container-fluid">
+            <header class="text-center"><h1>whatwg APIs</h1></header>
+            <section>
+                <ul class="list-group list-group-horizontal">
+                    <li class="list-group-item">
+                        <p class="shadow p-3 mb-5  rounded bg-primary text-white">Compability</p>
+                        <ul class="list-group list-group-flush" id="compabilityAPI">
+                        </ul>
+                    </li>
+                    <li class="list-group-item">
+                        <p class="shadow p-3 mb-5  rounded bg-primary text-white">Console</p>
+                        <ul class="list-group list-group-flush" id="consoleAPI">
+                        </ul>
+                    </li>
+                    <li class="list-group-item">
+                        <p class="shadow p-3 mb-5  rounded bg-primary text-white">DOM</p>
+                        <ul class="list-group list-group-flush" id="domAPI">
+                        </ul>
+                    </li>
+                    
+                    <li class="list-group-item">
+                        <p class="shadow p-3 mb-5  rounded bg-primary text-white">HTML</p>
+                        <ul class="list-group list-group-flush" id="htmlAPI">
+                        </ul>
+                    </li>
+                    <li class="list-group-item">
+                        <p class="shadow p-3 mb-5  rounded bg-primary text-white">Encoding</p>
+                        <ul class="list-group list-group-flush" id="encodingAPI">
+                        </ul>
+                    </li>
+                    <li class="list-group-item">
+                        <p class="shadow p-3 mb-5  rounded bg-primary text-white">Fetch</p>
+                        <ul class="list-group list-group-flush" id="fetchAPI">
+                        </ul>
+                    </li>
+
+                    <li class="list-group-item">
+                        <p class="shadow p-3 mb-5  rounded bg-primary text-white">FullScreen</p>
+                        <ul class="list-group list-group-flush" id="fullScreenAPI">
+                        </ul>
+                    </li>
+                    <li class="list-group-item">
+                        <p class="shadow p-3 mb-5  rounded bg-primary text-white">Notification</p>
+                        <ul class="list-group list-group-flush" id="notificationAPI">
+                        </ul>
+                    </li>
+                    <li class="list-group-item">
+                        <p class="shadow p-3 mb-5  rounded bg-primary text-white">Storage</p>
+                        <ul class="list-group list-group-flush" id="storageAPI">
+                        </ul>
+                    </li>
+
+                    <li class="list-group-item">
+                        <p class="shadow p-3 mb-5  rounded bg-primary text-white">Stream</p>
+                        <ul class="list-group list-group-flush" id="streamsAPI">
+                        </ul>
+                    </li>
+                    <li class="list-group-item">
+                        <p class="shadow p-3 mb-5  rounded bg-primary text-white">URL</p>
+                        <ul class="list-group list-group-flush" id="urlAPI">
+                        </ul>
+                    </li>
+                    <li class="list-group-item">
+                        <p class="shadow p-3 mb-5  rounded bg-primary text-white">XHR</p>
+                        <ul class="list-group list-group-flush" id="XHRAPI">
+                        </ul>
+                    </li>
+                  </ul>
+            </section>
+        </article>
+
+    </body>
+    <script>
+        function filterOut(list,collection){
+            let interfaces = new Set()
+            collection.forEach(o=>interfaces.add(o))
+            return list.filter(item=>!interfaces.has(item))
+        }
+        
+        let names = Object.getOwnPropertyNames(window)
+        console.log(names)
+        //I. Remove https://encoding.spec.whatwg.org/
+        const compabilityAPI =["ScreenOrientation"]
+        const consoleAPI=["console"],
+        domAPI =["MutationObserver","MutationRecord","ShadowRoot","AbortController","AbortSignal","CustomEvent",
+        "event",
+        "Event","EventTarget","NonElementParentNode", "DocumentOrShadowRoot", 
+        "ParentNode", "NonDocumentTypeChildNode", "ChildNode", "Slottable", 
+        "NodeList", "HTMLCollection", "NodeList", "HTMLCollection", "MutationObserver", "MutationRecord",
+         "Node", "Document", "DOMImplementation", "DocumentType", "DocumentFragment", "ShadowRoot", 
+         "Element", "NamedNodeMap", "Attr", "CharacterData", "Text", "CDATASection", "ProcessingInstruction", "Comment",
+         "AbstractRange", "StaticRange", "Range","NodeIterator", "TreeWalker", "NodeFilter","DOMTokenList",
+         "XPathResult", "XPathExpression", "XPathEvaluatorBase", "XPathEvaluator","Worker","CacheStorage","SharedWorker","StorageEvent",
+         "HTMLAllCollection", "HTMLFormControlsCollection", "HTMLOptionsCollection",
+        ],
+        
+         encodingAPI = ["TextDecoderCommon","TextDecoder"
+        ,"TextEncoderCommon", "TextEncoder","GenericTransformStream"
+        ,"TextDecoderStream", "TextEncoderStream"],
+        fetchAPI=['fetch',"Response","Request","Headers"],fullScreenAPI = ["requestFullscreen","onfullscreenchange",'onfullscreenerror']//on DOM Element
+        const htmlAPI=[
+        "setTimeout" ,"clearInterval", "setInterval","clearTimeout",
+            "WebSocket","DOMError","queueMicrotask",
+            "alert","confirm","prompt","print",
+            "window", "frames", "self", "document", "Document", "Window","status",
+            "open", "name", "close", "closed", "stop",
+            "navigator","Navigator",
+            "Location","location","origin","opener","top","parent","frameElement",
+            "length","MimeType","","MimeTypeArray","Plugin","PluginArray",
+            "locationbar", "menubar","personalbar", "scrollbars","statusbar","toolbar",
+            "createImageBitmap","MessagePort","MessageEvent","MessageChannel",
+            "ImageData","CanvasRenderingContext2D","ImageBitmap","ImageBitmapRenderingContext","History","history",
+            "EventSource",
+            "OffscreenCanvas","OffscreenCanvasRenderingContext2D",
+        "DOMStringMap","DOMStringList",
+        "btoa","atob","external","External","HTMLMarqueeElement","HTMLIFrameElement","HTMLAnchorElement","HTMLAreaElement",
+        "postMessage","MessageChannel","MessageEvent","MessagePort"]
+        const notificationAPI = ["Notification"],storageAPI = ["Storage","StorageManager","localStorage","sessionStorage","indexedDB","caches"]
+        const streamsAPI = ["ReadableStream", "ReadableStreamDefaultReader", "ReadableStreamBYOBReader", 
+        "ReadableStreamDefaultController", "ReadableByteStreamController", "ReadableStreamBYOBRequest",
+        "WritableStream", "WritableStreamDefaultWriter", "WritableStreamDefaultController",
+        "TransformStream", "TransformStreamDefaultController","ByteLengthQueuingStrategy", "CountQueuingStrategy"]
+        const urlAPI = ["URLSearchParams","URL"]
+        const XHRAPI = ["XMLHttpRequest","ProgressEvent","FormData","open",]
+        const WhatWGAPIs = [...compabilityAPI,...consoleAPI,...domAPI,...htmlAPI,...encodingAPI,...fetchAPI,...fullScreenAPI,...notificationAPI,
+        ...storageAPI,...streamsAPI,...urlAPI,...XHRAPI]
+        names = filterOut(names,WhatWGAPIs)
+        
+        //2. Remove ecma262JS API
+        let objs = ['globalThis','console','Infinity','NaN','undefined',"eval" ,"escape","unescape",
+            "isFinite", "isNaN", "parseFloat",  "parseInt",  "decodeURI", "decodeURIComponent",
+            "encodeURI",  "encodeURIComponent","Array", "Date",  "RegExp", "Promise", "Proxy", "Map", "WeakMap",
+            "Set", "WeakSet", "Function", "Boolean","String","Number","Symbol","Object",
+            "Error","EvalError","RangeError","ReferenceError","SyntaxError","TypeError","URIError",
+            "ArrayBuffer","SharedArrayBuffer","DataView", "Int8Array", "Uint8Array",  "Uint8ClampedArray",
+            "Int16Array", "Uint16Array", "Int32Array", "Uint32Array", "Float32Array",  "Float64Array",
+            "BigInt", "BigInt64Array", "BigUint64Array","Atomics","JSON","Math","Reflect","Proxy"]
+        names = filterOut(names,objs)
+        
+        //3.去掉Node相关的API:node的children，如htmlElement是node的子节点
+        names = names.filter(name=>{
+            try {
+                return !(window[name].prototype instanceof Node)
+            } catch (error) {
+                return true
+            }
+        }).filter(name=>name!="Node")
+        
+        //4. 去掉事件相关的
+        names = names.filter(name=>!name.match(/^on/))
+        //5. 去掉webkit私有的
+        names = names.filter(name=>!name.match(/^webkit/))
+        
+        //6.去掉international api 在ecma402里面
+        //http://www.ecma-international.org/ecma-402/5.0/index.html#Title
+        //https://tc39.es/ecma402/#introduction
+        names = names.filter(name=>name!="Intl")
+        
+        //7.去掉webgl开头的
+        //https://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15
+        //手工整理/爬它的网页找到全部关于webgl的标准
+        const webGLAPI =["WebGLBuffer","WebGLContextEvent","WebGLFramebuffer","WebGLProgram","WebGLRenderbuffer",
+        "WebGLShader","WebGLTexture","WebGLUniformLocation","WebGLActiveInfo","WebGLShaderPrecisionFormat","WebGLRenderingContext",
+        ""]
+        const webGT2API =["WebGLQuery","WebGL2RenderingContext","WebGLSampler","WebGLSync","WebGLTransformFeedback","WebGLVertexArrayObject"]
+        names = filterOut(names,[...webGLAPI,...webGT2API])
+        
+        //8.https://www.w3.org/TR/webaudio/ 
+        const webAudioAPI = ["BaseAudioContext", "AudioContext", 
+        "AudioContextOptions", "AudioContextOptions", "AudioTimestamp", "AudioTimestamp", "OfflineAudioContext", "OfflineAudioContextOptions", 
+        "OfflineAudioContextOptions", "OfflineAudioCompletionEvent", "OfflineAudioCompletionEventInit", "OfflineAudioCompletionEventInit", 
+        "AudioBuffer", "AudioBufferOptions", "AudioBufferOptions", "AudioNode", "AudioNodeOptions", "AudioNodeOptions", "AudioParam", 
+        "AudioParam", "AudioScheduledSourceNode", "AnalyserNode", "AnalyserOptions", "AnalyserOptions", "AudioBufferSourceNode", 
+        "AudioBufferSourceOptions", "AudioBufferSourceOptions", "AudioDestinationNode", "AudioListener", "AudioProcessingEvent", 
+        "AudioProcessingEventInit", "AudioProcessingEventInit", "BiquadFilterNode", "BiquadFilterOptions", "BiquadFilterOptions", 
+        "ChannelMergerNode", "ChannelMergerOptions", "ChannelMergerOptions", "ChannelSplitterNode", "ChannelSplitterOptions", 
+        "ChannelSplitterOptions", "ConstantSourceNode", "ConstantSourceOptions", "ConstantSourceOptions", "ConvolverNode", "ConvolverOptions", 
+        "ConvolverOptions", "DelayNode", "DelayOptions", "DelayOptions", "DynamicsCompressorNode", "DynamicsCompressorOptions", 
+        "DynamicsCompressorOptions", "GainNode", "GainOptions", "GainOptions", "IIRFilterNode", "IIRFilterOptions", "MediaElementAudioSourceNode", 
+        "MediaElementAudioSourceOptions", "MediaElementAudioSourceOptions", "MediaStreamAudioDestinationNode", "MediaStreamAudioSourceNode", 
+        "MediaStreamAudioSourceOptions", "MediaStreamAudioSourceOptions", "MediaStreamTrackAudioSourceNode", "MediaStreamTrackAudioSourceOptions", 
+        "MediaStreamTrackAudioSourceOptions", "OscillatorNode", "OscillatorOptions", "OscillatorOptions", "PannerNode", "PannerOptions", 
+        "PannerOptions", "PeriodicWave", "PeriodicWaveConstraints", "PeriodicWaveConstraints", "PeriodicWaveOptions", "PeriodicWaveOptions", 
+        "ScriptProcessorNode", "StereoPannerNode", "StereoPannerOptions", "StereoPannerOptions", "WaveShaperNode", "WaveShaperOptions", 
+        "WaveShaperOptions", "AudioWorklet", "AudioWorkletGlobalScope", "AudioWorkletProcessor", "AudioWorkletNode", "AudioWorkletNodeOptions", 
+        "AudioWorkletNodeOptions", "AudioWorkletNodeOptions", "AudioWorkletProcessor", "AudioParamDescriptor", "AudioParamDescriptor"]
+        names = filterOut(names,webAudioAPI)
+        
+        //9. webXR api
+        const webXRAPI =["XRWebGLLayer"]
+        names = filterOut(names,webXRAPI)
+        //10:https://wicg.github.io/background-sync/spec/#sync-manager-interface
+        //比较特别的这个：其实算是w3c的一部分，但是管理方式和w3c不一样，不如working group权利大。但是确实是w3c的下属组织
+        //syncmanager
+        const syncManagerAPI =["SyncManager","ServiceWorkerRegistration","periodicSyncManager"]
+        names = filterOut(names,syncManagerAPI)
+        
+        //11.web speech api
+        const webSpeekAPI = ["speechSynthesis","SpeechSynthesisErrorEvent","SpeechSynthesisEvent","SpeechSynthesisUtterance"]
+        names = filterOut(names,webSpeekAPI)
+        
+        //12. IDBIndex API
+        const idbIndexAPI = ["IDBRequest", "IDBFactory", "IDBDatabase", "IDBObjectStore", "IDBIndex", "IDBKeyRange", 
+        "IDBCursor", "IDBTransaction","IDBVersionChangeEvent","IDBCursorWithValue","IDBOpenDBRequest"]
+        names = filterOut(names,idbIndexAPI)
+        
+        //13:webRTC https://w3c.github.io/webrtc-pc/#dom-rtctrackevent
+        const webRTCAPI =  ["RTCConfiguration", "RTCIceCredentialType", "RTCIceServer", "RTCIceTransportPolicy", "RTCBundlePolicy", 
+        "RTCRtcpMuxPolicy", "RTCSignalingState", "RTCIceGatheringState", 
+        "RTCPeerConnectionState", "RTCIceConnectionState", "RTCSdpType", "RTCSessionDescription", 
+        "RTCIceCandidate", "RTCIceProtocol", "RTCIceTcpCandidateType", "RTCIceCandidateType", "RTCTrackEvent", "RTCStatsReport", "RTCSctpTransport"
+        ,"RTCRtpTransceiver","RTCRtpSender","RTCRtpReceiver","RTCPeerConnection","RTCErrorEvent", "RTCError"
+        , "RTCDtlsTransport","RTCDataChannelEvent","RTCDataChannel",
+         "RTCPeerConnectionIceEvent", "RTCPeerConnectionIceErrorEvent", "RTCCertificateExpiration", "RTCCertificate","RTCDTMFSender","RTCDTMFToneChangeEvent"]
+         names = filterOut(names,webRTCAPI)
+        //14. SVG
+        const svgAPI =  [ "SVGRadialGradientElement", "SVGSVGElement", "SVGElement","SVGRect", "SVGRectElement","SVGCircleElement", "SVGAnimatedLength", 
+        "SVGStyleElement", "SVGAnimatedBoolean", "SVGAnimatedString", "SVGAnimatedEnumeration", "SVGAnimatedNumber", "SVGAnimatedNumberList",
+         "SVGAnimatedLengthList", "SVGAnimatedAngle", "SVGAnimatedRect", "SVGAnimatedPreserveAspectRatio", "SVGLineElement", 
+         "SVGLength", "SVGAnimatedTransformList", "SVGAngle", "DOMRect", "SVGNumberList", "SVGLengthList", "SVGPointList", "SVGPolylineElement",
+         "SVGTransformList","SVGStringList", "SVGNumber", "SVGTransform", "SVGPreserveAspectRatio", "SVGTextElement", "SVGPathElement", 
+          "GlobalEventHandlers", "DocumentAndElementEventHandlers", "SVGGraphicsElement", "SVGEllipseElement","SVGPolygonElement",
+          "SVGBoundingBoxOptions", "SVGTests", "SVGGeometryElement", "isPointInPath", "CanvasDrawPath", "SVGFilterElement",
+          "isPointInStroke", "SVGAnimatedPoints", "SVGAnimatedInteger", "SVGURIReference", "SVGUnitTypes", "SVGFitToViewBox", "SVGPoint","SVGMatrix"]
+        names = filterOut(names,svgAPI)
+        //15.GeoMetry api https://drafts.fxtf.org/geometry/#dom-domrectreadonly-domrectreadonly
+        const geoMetryAPI =["DOMRectReadOnly","DOMPoint","DOMPointInit","DOMMatrix"]
+        names = filterOut(names,geoMetryAPI)
+        //16.Navigation Timing
+        const navTimingAPI = ["performance","PerformanceTiming","PerformanceNavigation"]
+        names = filterOut(names,navTimingAPI)
+        //17.High Resolution Time:https://www.w3.org/TR/hr-time/#sec-performance
+        const highResolutionTimeAPI = ["Performance"]
+        names = filterOut(names,highResolutionTimeAPI)
+        //18:https://wicg.github.io/frame-timing/#performanceframetiming-interface
+        const frameTimingAPI = ["PerformanceFrameTiming"]
+        names = filterOut(names,frameTimingAPI)
+        //19:https://www.w3.org/TR/resource-timing-2/#resources-included-in-the-performanceresourcetiming-interface
+        const resourceTimingAPI = ["PerformanceResourceTiming"]
+        names = filterOut(names,resourceTimingAPI)
+        //20:https://w3c.github.io/paint-timing/#sec-PerformancePaintTiming
+        const paintingTimingAPI = ["PerformancePaintTiming "]
+        names = filterOut(names,paintingTimingAPI)
+        //21:Media: Capture https://w3c.github.io/mediacapture-image/#imagecaptureapi
+        //https://w3c.github.io/mediacapture-main/#mediastreamtrackevent
+        const mediaCaptureAPI =["ImageCapture","PhotoCapabilities","MediaStream","MediaStreamTrack","MediaStreamTrackEvent","MediaDevices",
+        "MediaDeviceInfo"]
+        names = filterOut(names,mediaCaptureAPI)
+        //22: media MediaCapabilities
+        const mediaCapAPI = ["MediaCapabilities"]
+        names = filterOut(names,mediaCapAPI)
+        
+        //23.CSSOMAPI
+        const cssOMAPI =["Screen","screen"]
+        names = filterOut(names,cssOMAPI)
+        
+        //24.File Api
+        const fileAPI =["File","FileList","FileReader","Blob"]
+        names = filterOut(names,fileAPI)
+        
+        //25.Web IDL
+        const webIDLAPI = ["DOMException","DOMString"]
+        names = filterOut(names,webIDLAPI)
+        
+        //26.ServiceWorkerAPI
+        const serviceWorkerAPI = ["Cache"]
+        names = filterOut(names,serviceWorkerAPI)
+        
+        //27:media source extension api
+        const mediaSourceExtentionAPI = ["SourceBufferList","SourceBuffer"]
+        names = filterOut(names,mediaSourceExtentionAPI)
+        
+        //28:Crypto API
+        const webCryptoAPI = ["Crypto"]
+        names = filterOut(names,webCryptoAPI)
+        
+        //29:Credential ManagementAPI
+        const credentialManagementAPI = ["Credential"]
+        names = filterOut(names,credentialManagementAPI)
+
+
+        console.log('end',names)
+
+        //Render to DOM
+        const WhatWGAPIData = [{
+            id:'compabilityAPI',
+            data:compabilityAPI
+        },{
+            id:'consoleAPI',
+            data:consoleAPI
+        },{id:"domAPI",data:domAPI},{id:'htmlAPI',data:htmlAPI},{id:'encodingAPI',data:encodingAPI},{id:'fetchAPI',data:fetchAPI},{id:'fullScreenAPI',data:fullScreenAPI},{id:'notificationAPI',data:notificationAPI},
+        {id:'storageAPI',data:storageAPI},{id:'streamsAPI',data:streamsAPI},{id:"urlAPI",data:urlAPI},{id:'XHRAPI',data:XHRAPI}]
+        WhatWGAPIData.map(item=>renderAPIItem(item.id,item.data))
+
+        function renderAPIItem(id,data){
+            const el = document.getElementById(id)
+            data.map(str=>{
+                const li = document.createElement('li')
+                li.setAttribute('class',"list-group")
+                li.innerText = str
+                el.appendChild(li)
+            })
+        }
+        </script>
+</html>
