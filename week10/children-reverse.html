@@ -1,0 +1,50 @@
+<html>
+    <body>
+        <div id="a">
+            <span>1</span>
+            <a>2</a>
+            <div>3</div>
+            <p>4</p>
+        </div>
+    </body>
+    <script>
+        let element = document.getElementById('a')
+        reverseChilden(element)
+        //version 1
+        // function reverseChilden(element){
+        //     let children = element.childNodes
+        //     let count = 0
+        //     while (count<children.length-1) {
+        //         const after = children[count]
+        //         const last = children[children.length-1]
+        //         element.insertBefore(last,after)
+        //         count++
+        //     }
+        // }
+
+        //version 2
+        // function reverseChilden(element){
+        //     let l= element.childNodes.length
+        //     while(l-->0){
+        //         element.appendChild(element.childNodes[l])
+        //     }
+        // }
+
+        //希望重排次数尽可能的少 version 3
+        //1. 移除所有的子节点
+        //2.把排列好的子节点append上去
+        function reverseChilden(element){
+            var range = new Range()
+            range.selectNodeContents(element) 
+            var fragment = range.extractContents() //frangment不会有任何的重排/重绘
+            var l = fragment.childNodes.length
+            while (l-->0) {
+                fragment.appendChild(fragment.childNodes[l])
+            }
+            element.appendChild(fragment)
+            //对真实dom树的操作只有拿下来和放上去这两步，因此只会触发两次重排
+
+        }
+       
+    </script>
+</html>
