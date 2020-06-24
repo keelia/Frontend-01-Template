@@ -1,0 +1,216 @@
+<style>
+    .cell{
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        background-color: gray;
+        border-bottom: 1px solid white;
+        border-right: 1px solid white;
+        vertical-align: middle;
+    }
+    #container{
+        width: 701px;
+    }
+</style>
+<div id="container">
+
+</div>
+<!--把map写进localstorage-->
+<button onclick="localStorage.map = JSON.stringify(map)">save</button>
+
+<script>
+    //一般用对象{value:xx,left:xx,right:xx}来表示堆这类复杂结构，但是比较好的是用数组形式的二叉树：【堆顶，第一层2个，第二层4个，。。。】
+    //insert 的时候是不会排序的。只有take的时候才会排序
+    class BinaryHeap{
+        constructor(data,compare){
+            this.data= data
+            this.compare = compare
+        }
+        take(){
+            if(!this.data.length){
+                return//不return null，以免data中有值是null
+            }
+            let min = this.data[0];
+            //fix heap修补好二叉树
+            let i =0//空洞在i的位置
+            while (i<this.data.length) {
+                
+                //找i下面的叶子节点， 看两个谁大
+                // i*2+1
+                // i*2+2
+
+                //处理边缘case
+                if(i*2+1>=this.data.length){
+                    break;
+                }
+                if(i*2+2>=this.data.length){//前一个节点是在heap里的
+                    this.data[i] = this.data[i*2+1];
+                    i = i*2+1
+                    break;
+                }
+
+                if(this.compare(this.data[i*2+1],this.data[i*2+2])<0){//更小的上位
+                    //完成了这一层的比较
+                    //挪动空洞
+                    this.data[i] = this.data[i*2+1];
+                    i = i*2+1
+                }else{
+                    this.data[i] = this.data[i*2+2];
+                    i = i*2+2
+                }
+            }
+            if(i<this.data.length-1){
+                //如果在上一层产生了空洞，要把下一层的节点移动上来
+                this.insertAt(i,this.data.pop())
+            }else{
+                this.data.pop()
+            }
+            
+            //return 找到的最小的值
+            return min
+        }
+
+        insertAt(i,v){
+            //插入的时候小于自己的父元素((Math.floor((i-1)/2)<0?0:Math.floor((i-1)/2)))就什么都不发生，如果大于自己的父元素就交换
+            //找到自己的父元素
+            this.data[i] = v
+            while(this.compare(v,this.data[(Math.floor((i-1)/2)<0?0:Math.floor((i-1)/2))])<0){
+                this.data[i] = this.data[(Math.floor((i-1)/2)<0?0:Math.floor((i-1)/2))]
+                this.data[(Math.floor((i-1)/2)<0?0:Math.floor((i-1)/2))] = v
+                i = (Math.floor((i-1)/2)<0?0:Math.floor((i-1)/2))
+            }
+        }
+
+        insert(v){
+            this.insertAt(this.data.length,v)
+        }
+        get length(){
+            return this.data.length
+        }
+    }
+    // let heap = new BinaryHeap([],(a,b)=>a-b)
+    // heap.insert(3)
+    // heap.insert(2)
+    // heap.insert(1)
+    // heap.insert(6)
+    // heap.insert(7)
+    // heap.insert(9)
+
+    let container = document.getElementById('container')
+    //1.储存地图盘的数据结构：地图比较大的情况下，推荐使用1维数组 100*100
+    //var map = new Array(10001).join(0).split('').map(s=>Number(s))
+    var map = localStorage.map ?JSON.parse(localStorage.map) : new Array(10000).fill(0)
+    //2. draw map
+    for (let y = 0; y < 100; y++) {
+        for (let x = 0; x < 100; x++) {
+            const cell = document.createElement('div')
+            cell.classList.add('cell')
+            if(map[y*100 + x] ===1){
+                cell.style.backgroundColor = 'black';
+            }
+            //事件触发都是有一定频率的，所以鼠标移动较快时会掉像素
+            cell.addEventListener('mouseover',()=>{
+                if(mouse){
+                    if(clear){
+                        cell.style.backgroundColor = '';//清理背景
+                        //记录在map中
+                        map[y*100 + x] = 0
+                    }else{
+                        //记录在map中
+                        cell.style.backgroundColor = 'black';
+                        map[y*100 + x] = 1
+                    }
+                }
+            })
+            container.appendChild(cell)
+            
+        }
+        
+    }
+
+    let mouse = true
+    let clear = false
+    //2.有可能在map外面进出，也需要让它能画/停止画，所以在document上监听
+    document.addEventListener('mousedown',(e)=>{
+        mouse = true
+        clear = e.button === 2//代表右键
+        })
+    document.addEventListener('mouseup',()=>mouse = false)
+
+    //3。橡皮擦，鼠标右键
+    document.addEventListener('contextmenu',(e)=>e.preventDefault())//禁掉右键菜单栏
+
+    //看起始点和终点是不是一条路
+    //先找起点的上下左右四个节点，这4个节点的上下左右点也可以找到，这样铺开去找
+    //深度优先搜索（像递归）/广度优先搜索
+    //广度优先搜素
+    async function path(map,start,end){
+        map = map.slice()
+        //一个格的状态有3种：1.未知，不知道能不能走到；2.走到了，不知道它周围的点能不能走，是否展开了；3.走到了周围的点展开了
+
+        //A* 算法如果用启发函数找出来的值，必定小于到终点的距离，那么就一定能找到最优路径。
+        //改变：需要找到启发函数最小的点
+        function distance([x,y]){//开不开根号不影响大小关系，就不开根号浪费浮点运算了
+            return (x-end[0])**2 + (y-end[1])**2
+        }
+        let collection = new BinaryHeap([start],(a,b)=>{
+            return distance(a)-distance(b)
+        })
+        container.children[100*start[1]+start[0]].style.backgroundColor = 'green';
+        container.children[100*end[1]+end[0]].style.backgroundColor = 'red';
+       
+        async function insert([x,y],prev){ //有障碍了不能走，到边界了不能走,
+            if(map[100*y+x]!== 0){
+                return 
+            }
+            if(x<0 || y<0 ||x >=100 || y>= 100){
+                return
+            }
+            //访问过的点不需要再重复看
+            map[100*y+x] = prev
+            container.children[100*y+x].style.backgroundColor = 'lightgreen'
+            await sleep(0.1) 
+            collection.insert([x,y])
+
+        }
+        while(collection.length){
+            //每次循环展开一个格
+            let [x,y] = collection.take()
+            if(x=== end[0] && y === end[1]){
+                console.log('find!')
+                //找到了之后去找path
+                //只要没到起点就去找prev的点
+                let path = []
+                while(x!==start[0] || y!==start[1]){
+                    path.push([x,y]);
+                    container.children[100*y+x].style.backgroundColor = 'lightpink';
+                    await sleep(3); 
+                    [x,y] = map[100*y + x];
+                }
+                return path
+            }
+            //上下左右的点push进去
+            //记录从哪来的点
+            await insert([x-1,y],[x,y])//左
+            await insert([x+1,y],[x,y])//右
+            await insert([x,y-1],[x,y])//上
+            await insert([x,y+1],[x,y])//下
+
+            //增加斜线查找
+            //optional：可以增加斜边处理的方法，以防穿透斜边
+            await insert([x-1,y-1],[x,y])//左
+            await insert([x+1,y-1],[x,y])//右
+            await insert([x-1,y+1],[x,y])//上
+            await insert([x+1,y+1],[x,y])//下
+        }
+        return null
+    }
+
+    function sleep(t){
+        return new Promise(resolve=>{
+            setTimeout(resolve,t)
+        })
+    }
+
+
+</script>

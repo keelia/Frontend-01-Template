@@ -1,0 +1,168 @@
+<style>
+    .cell{
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        background-color: gray;
+        border-bottom: 1px solid white;
+        border-right: 1px solid white;
+        vertical-align: middle;
+    }
+    #container{
+        width: 701px;
+    }
+</style>
+<div id="container">
+
+</div>
+<!--把map写进localstorage-->
+<button onclick="localStorage.map = JSON.stringify(map)">save</button>
+
+<script>
+    //输入无序列数组=>吐出来有序的数
+    class Sorted{
+        constructor(data,compare){
+            this.data= data
+            this.compare = compare
+        }
+        take(){
+            if(!this.data.length){
+                return//不return null，以免data中有值是null
+            }
+            let min = this.data[0];
+            let minIndex = 0;
+            for (let i = 1; i <this.data.length; i++){
+                if(this.compare(this.data[i],min)<0){//注意这里跟array.sort的模式保持一致性，这样可以直接传array.sort
+                    min = this.data[i];
+                    minIndex = i;
+                }
+            }
+            //比splice更高效的去掉minIndex位置上的数据：交换和最后一位的位置然后pop掉
+            this.data[minIndex] = this.data[this.data.length-1]
+            this.data.pop()
+            //return 找到的最小的值
+            return min
+        }
+
+        insert(v){
+            this.data.push(v)
+        }
+        get length(){
+            return this.data.length
+        }
+    }
+    let container = document.getElementById('container')
+    //1.储存地图盘的数据结构：地图比较大的情况下，推荐使用1维数组 100*100
+    //var map = new Array(10001).join(0).split('').map(s=>Number(s))
+    var map = localStorage.map ?JSON.parse(localStorage.map) : new Array(10000).fill(0)
+    //2. draw map
+    for (let y = 0; y < 100; y++) {
+        for (let x = 0; x < 100; x++) {
+            const cell = document.createElement('div')
+            cell.classList.add('cell')
+            if(map[y*100 + x] ===1){
+                cell.style.backgroundColor = 'black';
+            }
+            //事件触发都是有一定频率的，所以鼠标移动较快时会掉像素
+            cell.addEventListener('mouseover',()=>{
+                if(mouse){
+                    if(clear){
+                        cell.style.backgroundColor = '';//清理背景
+                        //记录在map中
+                        map[y*100 + x] = 0
+                    }else{
+                        //记录在map中
+                        cell.style.backgroundColor = 'black';
+                        map[y*100 + x] = 1
+                    }
+                }
+            })
+            container.appendChild(cell)
+            
+        }
+        
+    }
+
+    let mouse = true
+    let clear = false
+    //2.有可能在map外面进出，也需要让它能画/停止画，所以在document上监听
+    document.addEventListener('mousedown',(e)=>{
+        mouse = true
+        clear = e.button === 2//代表右键
+        })
+    document.addEventListener('mouseup',()=>mouse = false)
+
+    //3。橡皮擦，鼠标右键
+    document.addEventListener('contextmenu',(e)=>e.preventDefault())//禁掉右键菜单栏
+
+    //看起始点和终点是不是一条路
+    //先找起点的上下左右四个节点，这4个节点的上下左右点也可以找到，这样铺开去找
+    //深度优先搜索（像递归）/广度优先搜索
+    //广度优先搜素
+    async function path(map,start,end){
+        map = map.slice()
+        //一个格的状态有3种：1.未知，不知道能不能走到；2.走到了，不知道它周围的点能不能走，是否展开了；3.走到了周围的点展开了
+
+        //A* 算法如果用启发函数找出来的值，必定小于到终点的距离，那么就一定能找到最优路径。
+        //改变：需要找到启发函数最小的点
+        function distance([x,y]){//开不开根号不影响大小关系，就不开根号浪费浮点运算了
+            return (x-end[0])**2 + (y-end[1])**2
+        }
+        let collection = new Sorted([start],(a,b)=>distance(a)-distance(b))
+        container.children[100*start[1]+start[0]].style.backgroundColor = 'green';
+        container.children[100*end[1]+end[0]].style.backgroundColor = 'red';
+       
+        async function insert([x,y],prev){ //有障碍了不能走，到边界了不能走,
+            if(map[100*y+x]!== 0){
+                return 
+            }
+            if(x<0 || y<0 ||x >=100 || y>= 100){
+                return
+            }
+            //访问过的点不需要再重复看
+            map[100*y+x] = prev
+            container.children[100*y+x].style.backgroundColor = 'lightgreen'
+            await sleep(0.1) 
+            collection.insert([x,y])
+
+        }
+        while(collection.length){
+            //每次循环展开一个格
+            let [x,y] = collection.take()
+            if(x=== end[0] && y === end[1]){
+                console.log('find!')
+                //找到了之后去找path
+                //只要没到起点就去找prev的点
+                let path = []
+                while(x!==start[0] || y!==start[1]){
+                    path.push([x,y]);
+                    container.children[100*y+x].style.backgroundColor = 'lightpink';
+                    await sleep(3); 
+                    [x,y] = map[100*y + x];
+                }
+                return path
+            }
+            //上下左右的点push进去
+            //记录从哪来的点
+            await insert([x-1,y],[x,y])//左
+            await insert([x+1,y],[x,y])//右
+            await insert([x,y-1],[x,y])//上
+            await insert([x,y+1],[x,y])//下
+
+            //增加斜线查找
+            await insert([x-1,y-1],[x,y])//左
+            await insert([x+1,y-1],[x,y])//右
+            await insert([x-1,y+1],[x,y])//上
+            await insert([x+1,y+1],[x,y])//下
+        }
+        return null
+    }
+
+    function sleep(t){
+        return new Promise(resolve=>{
+            setTimeout(resolve,t)
+        })
+    }
+
+
+</script>
