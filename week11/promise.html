@@ -1,0 +1,65 @@
+<style>
+    div{
+        background-color: grey;
+        display: inline-block;
+        margin: 30px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50px;
+    }
+    .green.light{
+        background-color: green;
+    }
+
+    .yellow.light{
+        background-color: yellow;
+    }
+
+    .red.light{
+        background-color: red;
+    }
+</style>
+<div class="green"></div>
+<div class="yellow"></div>
+<div class="red"></div>
+<script>
+    //setTimeout
+    function green(){
+        var lights = document.getElementsByTagName('div');
+        for (let index = 0; index < 3; index++) {
+            lights[index].classList.remove("light")
+        }
+        document.getElementsByClassName("green")[0].classList.add("light")
+    }
+    function red(){
+        var lights = document.getElementsByTagName('div');
+        for (let index = 0; index < 3; index++) {
+            lights[index].classList.remove("light")
+        }
+        document.getElementsByClassName("red")[0].classList.add("light")
+    }
+    function yellow(){
+        var lights = document.getElementsByTagName('div');
+        for (let index = 0; index < 3; index++) {
+            lights[index].classList.remove("light")
+        }
+        document.getElementsByClassName("yellow")[0].classList.add("light")
+    }
+    function sleep(t){
+        return new Promise(resolve=>{
+            setTimeout(resolve,t)
+        })
+    }
+    //promise把原来的settimeout的嵌套形式换成了链式表达的形式，其实本质上并没什么区别
+    function go(){
+        green()
+        sleep(10000).then(()=>{
+            yellow()
+            return sleep(2000)
+        }).then(()=>{
+            red()
+            return sleep(5000)
+        }).then(go)
+    }
+   
+</script>
