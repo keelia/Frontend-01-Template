@@ -1,0 +1,50 @@
+<style>
+    .keywords{
+        color:blue;
+    }
+    .identifier{
+        color:skyblue;
+    }
+    .puncutator{
+        color:blueviolet;
+    }
+
+</style>
+<pre id="container">
+
+</pre>
+<script>
+    var source = `
+    function sleep(t){
+        return new Promise(resolve=>{
+            setTimeout(resolve,t)
+        })
+    }
+    `
+    //Filter Keywords
+    var regexp = /(function|new|return)|([ \t\n\r]+)|([a-zA-Z][a-zA-Z0-9]+)|([(){},;=>])/g
+
+    var dictionary =["keywords","whitespace",'identifier','puncutator']
+    var token = null
+    var lastIndex = 0
+    var container = document.getElementById('container')
+    do {
+        lastIndex = regexp.lastIndex
+        token = regexp.exec(source)
+        if(!token){
+            break;
+        }
+        let text = document.createElement('span')
+        text.textContent = token[0]
+
+        for (let index = 1; index < dictionary.length+1; index++) {
+            if(token[index]){
+                text.classList.add(dictionary[index-1])
+                //console.log(dictionary[index-1],':',token[0])
+            }
+        }
+        container.appendChild(text)
+    } while (token);
+    //可以在都while中用async/await实现进度条的效果
+    //也可以手动的去改regexp的lastindex，这才是正则表达式对象的含义/能力
+</script>

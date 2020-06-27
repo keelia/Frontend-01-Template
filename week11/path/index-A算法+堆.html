@@ -146,6 +146,8 @@
     //广度优先搜素
     async function path(map,start,end){
         map = map.slice()
+        let table = new Array(10000).fill(Infinity)//来记录点到起点的distance，默认给正无穷
+        table[start[1]*100+start[0]] = 0
         //一个格的状态有3种：1.未知，不知道能不能走到；2.走到了，不知道它周围的点能不能走，是否展开了；3.走到了周围的点展开了
 
         //A* 算法如果用启发函数找出来的值，必定小于到终点的距离，那么就一定能找到最优路径。
@@ -159,15 +161,22 @@
         container.children[100*start[1]+start[0]].style.backgroundColor = 'green';
         container.children[100*end[1]+end[0]].style.backgroundColor = 'red';
        
-        async function insert([x,y],prev){ //有障碍了不能走，到边界了不能走,
-            if(map[100*y+x]!== 0){
+        async function insert([x,y],prev,fromStart){ //有障碍了不能走，到边界了不能走,
+            // if(map[100*y+x]!== 0){//这里的逻辑会让走过的点（非障碍点）不再走，但应该是即使是走过的点只要算出的distance比这个map[100*y+x]就要替换，而不是直接return
+            //     return 
+            // }
+            if(map[100*y+x]=== 1){//被绘制为障碍
                 return 
             }
             if(x<0 || y<0 ||x >=100 || y>= 100){
                 return
             }
-            //访问过的点不需要再重复看
+            if(fromStart >= table[100*y+x]){
+                return
+            }
+            //小于的话要重新走，而不是return
             map[100*y+x] = prev
+            table[100*y+x] = fromStart//更新table存的距离起点的值
             container.children[100*y+x].style.backgroundColor = 'lightgreen'
             await sleep(0.1) 
             collection.insert([x,y])
@@ -176,6 +185,7 @@
         while(collection.length){
             //每次循环展开一个格
             let [x,y] = collection.take()
+            let fromStart = table[100*y+x]
             if(x=== end[0] && y === end[1]){
                 console.log('find!')
                 //找到了之后去找path
@@ -191,17 +201,17 @@
             }
             //上下左右的点push进去
             //记录从哪来的点
-            await insert([x-1,y],[x,y])//左
-            await insert([x+1,y],[x,y])//右
-            await insert([x,y-1],[x,y])//上
-            await insert([x,y+1],[x,y])//下
+            await insert([x-1,y],[x,y],fromStart+1)//左
+            await insert([x+1,y],[x,y],fromStart+1)//右
+            await insert([x,y-1],[x,y],fromStart+1)//上
+            await insert([x,y+1],[x,y],fromStart+1)//下
 
             //增加斜线查找
-            //optional：可以增加斜边处理的方法，以防穿透斜边
-            await insert([x-1,y-1],[x,y])//左
-            await insert([x+1,y-1],[x,y])//右
-            await insert([x-1,y+1],[x,y])//上
-            await insert([x+1,y+1],[x,y])//下
+            //optional：可以增加斜边处理的方法，以防穿透斜边:横着或者竖着在一个方向上有一个格是能过去的
+            await insert([x-1,y-1],[x,y],fromStart+1.4)//左
+            await insert([x+1,y-1],[x,y],fromStart+1.4)//右
+            await insert([x-1,y+1],[x,y],fromStart+1.4)//上
+            await insert([x+1,y+1],[x,y],fromStart+1.4)//下
         }
         return null
     }

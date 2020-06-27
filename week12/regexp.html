@@ -1,0 +1,144 @@
+<script>
+    var regexp = /([1-9][0-9]*(?:\.[0-9]*)?)|([ ]+)|([\n\r]+)|(\+)|(\-)|(\*)|(\/)/g
+    var dictionary =["Number","Whitespace",'LineTerminator','+','-','*','/']
+    //optional： 可以把tokenize函数用状态机实现
+    function* tokenize(source){
+        var result = null
+        var lastIndex = 0
+        while(true) {
+            lastIndex = regexp.lastIndex
+            result = regexp.exec(source)
+            if(!result){
+                break;
+            }
+            if(regexp.lastIndex - lastIndex > result[0].length){
+                throw new Error('Unexpected Token \"'+ source.slice(lastIndex,regexp.lastIndex- result[0].length) + '\"')//有不认识的字符出来了.要不然不认识的字符会被忽略
+            }
+            let token  = {
+                type:null,
+                value:null
+            }
+            for (let index = 0; index < dictionary.length; index++) {
+                if(result[index+1]){
+                    token.type = dictionary[index]
+                }
+            }
+            token.value = result[0]
+            yield token
+        }
+
+        yield {type:'EOF'}//代表解析完成
+    }
+    //答题思路就是按照产生式的规则用js写出来，
+    //需要注意的是规则的展开<MultiplicativeExpression>在AdditiveExpression中是需要展开的，展到每个规则的首项都被展开就可以了，因为需要检查每个规则进来的首项是什么
+    
+    
+    //只认EOF，让产生式知道什么时候是停下的
+    function Expression(source){
+        if(source[0].type === 'AdditiveExpression' && source[1].type === 'EOF'){
+            let node  = {
+                type:'Expression',
+                children:[source.shift(),source.shift()]
+            }
+            source.unshift(node)
+            return node
+        }
+        
+        //其他的情况调用AdditiveExpression
+        AdditiveExpression(source)
+        return Expression(source)
+    }
+
+    //AdditiveExpression的开头可能有三种，MultiplicativeExpression（有两种开头Number和MultiplicativeExpression）/AdditiveExpression
+    function AdditiveExpression(source){
+
+        if(source[0].type ===  dictionary[0]){
+            MultiplicativeExpression(source)
+            return AdditiveExpression(source)
+        }
+        if(source[0].type === 'MultiplicativeExpression' ){
+            let node = {
+                type:'AdditiveExpression',
+                children:[source.shift()]
+            }
+            source.unshift(node)
+            return AdditiveExpression(source)
+        }
+        if(source[0].type === 'AdditiveExpression' && source.length>1 && source[1].type ===  dictionary[3]){//+
+            //新产一个节点
+            let node = {
+                type:'AdditiveExpression',
+                children:[source.shift(),source.shift()]
+            }
+            MultiplicativeExpression(source)
+            node.children.push(source.shift())
+            source.unshift(node)
+            return AdditiveExpression(source)
+        }
+        //-号是一样的逻辑
+        if(source[0].type === 'AdditiveExpression' && source.length>1 && source[1].type ===  dictionary[4]){//-
+            //新产一个节点
+            let node = {
+                type:'AdditiveExpression',
+                children:[source.shift(),source.shift()]
+            }
+            MultiplicativeExpression(source)
+            node.children.push(source.shift())
+            source.unshift(node)
+            return AdditiveExpression(source)
+        }
+
+        if(source[0].type === 'AdditiveExpression'){
+            return source[0]
+        }
+        //不认识，不再是AdditiveExpression：意味着连+/-的操作结束
+        throw new Error()
+    }
+
+    function MultiplicativeExpression(source){
+        //从BNF来看：source[0]只有两种可能性：NUmber/MultiplicativeExpression
+        if(source[0].type ===  dictionary[0]){//Number自己可以被包成MultiplicativeExpression,所以遇到number就生产出一个MultiplicativeExpression
+            //新产一个节点
+            let node = {
+                type:'MultiplicativeExpression',
+                children:source.shift()
+            }
+            source.unshift(node)
+            return MultiplicativeExpression(source)
+        }
+        //如果source[0]是MultiplicativeExpression，source1必须是已知的*/
+        if(source[0].type ===  'MultiplicativeExpression' && source.length>1 && source[1].type ===  dictionary[5]){
+            let node  = {
+                type:'MultiplicativeExpression',
+                children:[source.shift(),source.shift(),source.shift()]
+            }
+            source.unshift(node)
+            return MultiplicativeExpression(source)
+        }
+        if(source[0].type ===  'MultiplicativeExpression' && source.length>1 && source[1].type ===  dictionary[6]){
+            let node  = {
+                type:'MultiplicativeExpression',
+                children:[source.shift(),source.shift(),source.shift()]
+            }
+            source.unshift(node)
+            return MultiplicativeExpression(source)
+        }
+        //MultiplicativeExpression 还可以能产生更多的*/，因此要穷尽的去判断MultiplicativeExpression。直到第一个节点之后是他不认识字符停止
+        //以上列出的是MultiplicativeExpression认识的全部情况
+        if(source[0].type === 'MultiplicativeExpression'){
+            return source[0]
+        }
+        //不认识，不再是MultiplicativeExpression，意味着连续*/的操作结束
+        throw new Error()
+        
+    }
+
+    let source = []
+    for (const token of tokenize("5 + 1024.23 * 2")) {
+        if(token.type!== dictionary[1] && token.type!==dictionary[2]){
+            source.push(token)
+        }
+    }
+    console.log(Expression(source))
+    
+</script>
