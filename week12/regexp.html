@@ -1,4 +1,5 @@
 <script>
+    //# 使用LL算法构建AST
     var regexp = /([1-9][0-9]*(?:\.[0-9]*)?)|([ ]+)|([\n\r]+)|(\+)|(\-)|(\*)|(\/)/g
     var dictionary =["Number","Whitespace",'LineTerminator','+','-','*','/']
     //optional： 可以把tokenize函数用状态机实现
@@ -140,5 +141,6 @@
         }
     }
     console.log(Expression(source))
+    //optional：可以把括号加进去
     
 </script>
