@@ -1,0 +1,38 @@
+<script>
+    function find(source, pattern){
+        let table = new Array(pattern.length).fill(0) //【source中如果有重复出现的子串，在某处不匹配时，查找的index【j】需要返回到一个位置】表中装的是pattern中的每个字符的index，如果在遇到需要返回的时候，它返回的位置：如find('abcabcabxxxyz','abcabx')，x对应的index，在需要被返回的时候，该去第二个a的位置再去查找
+        let k = 0
+        for (let j = 1; j < pattern.length; j++) { //j从1开始
+            if(pattern[j] === pattern[k]){
+                k++
+            }else{
+                k =0
+            }
+            table[j] = k
+        }
+        console.log(table)
+        let j = 0;
+        for (let i = 0; i < source.length; i++) {
+            console.log(j,source[i] , pattern[j])
+            if(source[i] === pattern[j]){
+                j++
+            }else{
+            
+                while (source[i]!==pattern[j] && j >0) {
+                    j= table[j] //用一个表记录j每次需要返回的位置，而不是每次都返回到0
+                }
+
+                if(source[i] === pattern[j]){
+                    j++
+                }else{
+                    j =0
+                }
+                
+            }
+            if(j===pattern.length){
+                return true
+            }
+        }
+        return false
+    }
+</script>

@@ -1,0 +1,25 @@
+<script>
+    function find(source, pattern){
+        let j =0;
+        for (let i = 0; i < source.length; i++) {
+            debugger
+            if(source[i] === pattern[j]){
+                j++
+            }else{
+                //直接让j=0，回去的太过了，有缺陷：source中有重复pattern的话，find('abcabcabxxxyz','abcabx')//false ，第二个abc已经被abx的查找消费掉了
+                j=0
+                //解决find('abcxxyz','xy')//false的问题 改进：没匹配的时候j回去，之后再检查一边：第i个和pattern的0是不是匹配
+                if(source[i] === pattern[j]){
+                    j++
+                }else{
+                    j =0
+                }
+                
+            }
+            if(j===pattern.length){
+                return true
+            }
+        }
+        return false
+    }
+</script>
