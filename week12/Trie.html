@@ -1,0 +1,56 @@
+<script>
+    class Trie{
+        constructor(){
+            this.root = Object.create(null)//也可以new Map()//存数组占的空间会比较大，map会紧凑一些
+        }
+        //没有必要在insert的时候就记录最大最小出现频次，因为需求不一样，可能会需要出现的前50多的/出现的前50大的，保持insert函数功能单一
+        insert(word){
+            let node = this.root
+            for (const c of word) {//每个单词作为分支
+                if(!node[c]){
+                    node[c] = Object.create(null)
+                }
+                node = node[c]
+            }
+            //$用于知道字符串的结束，不然不知道‘ab'是不是一个独立的单词
+            //可能有重复的单词，需要记下单词的数量
+            if(!('$' in node)){
+                node['$'] =0
+            }
+            node['$']++
+        }
+        //找出trie出现频率最多的一个节点：访问每个节点
+        most(){
+            let max = 0;
+            let maxWord = null
+            //访问每个节点，每个节点也是一个trie树
+            let visit = (node,word)=>{
+                if(node.$ && node.$>max){
+                    max = node.$
+                    maxWord = word
+                }
+                for (const key in node) {
+                    visit(node[key],word+key)
+                }
+            }
+            visit(this.root,'')
+            console.log(maxWord,max)
+        }
+    }
+    //test case
+    function randomWord(length){
+        var s = ''
+        for (let index = 0; index < length; index++) {
+            s+=String.fromCharCode(Math.random()*26 + 'a'.charCodeAt(0)) //a-z
+            
+        }
+        return s
+    }
+    let trie = new Trie()
+    for (let index = 0; index < 100000; index++) {
+        trie.insert(randomWord(4))
+    }
+    //10w个数字，不需要去排序nlogn，用trie树排序就接近on，能超过nlogn的。trie很自由的时间空间转换
+    //比较1，100000，9078,只需要让前面都补零，成为长度相等的字符串，然后用trie比较大小
+
+</script>
