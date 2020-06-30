@@ -1,0 +1,53 @@
+<script>
+    function find(source, pattern){
+        //对pattern进行分段：处理首位，知道哪个是最后一个*
+        let starCount = 0
+        for (let i = 0; i < pattern.length; i++) {
+            if(pattern[i] === '*'){
+                starCount++;
+            }
+        }
+        if(starCount === 0){
+            let matched = false
+            for (let i = 0; i < pattern.length; i++) {
+                if(pattern[i]!==source[i] && pattern[i]!=="?"){
+                    return false
+                }
+            }
+        }
+        //把头尾的*匹配解决
+        let i = 0 //i代表在source中的位置
+        let lastIndex = 0
+        for (i = 0; pattern[i]!=="*"; i++) {//找到了第一个*
+            if(pattern[i]!==source[i] && pattern[i]!=="?"){
+                return false
+            }
+        }
+        lastIndex = i
+        let result
+        for (let p = 0; p < starCount-1; p++) {
+            i++ //跳过第一个*
+            let subPattern = ""
+            while (pattern[i]!=="*") {
+                subPattern+=pattern[i]
+                i++
+            }
+            //每个子串都有不同的正则表达式，每个lastindex建立在前一个的基础上，第一个建立在i上ß
+            let reg = new RegExp(subPattern.replace(/\?/g,"[\\s\\S]"),"g")
+            reg.lastIndex = lastIndex
+            result = reg.exec(source)
+            console.log( result  )
+            lastIndex = reg.lastIndex
+            console.log(lastIndex,result.index)
+        }
+
+        //最后一个*对应的子串
+        for(let j = 1; j <= source.length - result.index && pattern[pattern.length-j]!=="*";j++){
+            if(pattern[pattern.length-j]!==source[source.length-j]&& pattern[pattern.length-j]!=="?"){
+                return false
+            }
+        }
+        return true
+
+    }
+</script>
