@@ -37,6 +37,9 @@
             reg.lastIndex = lastIndex
             result = reg.exec(source)
             console.log( result  )
+            if(!result){//如果没匹配到，returnfalse
+                return false
+            }
             lastIndex = reg.lastIndex
             console.log(lastIndex,result.index)
         }
