@@ -1,0 +1,20 @@
+<script>
+    let obj = {
+        a:1,
+        b:2
+    }
+    //obj.a = 1;//赋值这个对象是不会有办法知道/监听它被赋值了的
+  
+    let proxy = new Proxy(obj,{//不一定proxy要和obj相关
+        get(obj,prop){
+            console.log(obj,prop)
+            return obj[prop]
+        },
+        defineProperty(obj,prop,desc){//Object.defineProperty(proxy,"a",{value:10})
+            console.log(arguments)
+            //要return合规的的值，类似下面
+            return Object.defineProperty(obj,prop,desc)
+        }
+    })
+  
+</script>

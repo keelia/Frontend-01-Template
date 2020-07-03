@@ -1,0 +1,61 @@
+<script>
+    //关键点：何时进行依赖收集？ 在get的时候就进行依赖收集，并用map来去掉重复的handler
+    let handlers = new Map()
+
+    let usedReactivities = []
+    
+    let obj = {
+        a:1,
+        b:2
+    }
+    //类似promise，proxy的构建也是一个function returnnew的方式
+    function reactive(obj){
+        return new Proxy(obj,{
+        get(obj,prop){
+            //在get中收集依赖
+            usedReactivities.push([obj,prop])
+            return obj[prop]
+        },
+        set(obj,prop,val){
+            obj[prop] = val
+            if(handlers.get(obj)){
+                if(handlers.get(obj).get(prop)){
+                    for (const handler of handlers.get(obj).get(prop)) {
+                        handler()
+                    }
+                }
+            }
+            return obj[prop]
+            
+        }
+    }) 
+    }
+
+    function effect(handler){
+        //effect之前清空usedReactivity，再收集
+        usedReactivities = []
+        handler()//在执行handler()的时候，调用了proxy的get方法，因此在get中收集obj+prop的依赖进usedReactivities
+        //收集之后，把跟obj的prop相关的依赖handler全都存进handlers
+        for(let usedReactivity of usedReactivities){
+            let [obj,prop ] = usedReactivity
+            if(!handlers.has(obj)){
+                handlers.set(obj,new Map())
+            }
+            if(!handlers.get(obj).has(prop)){
+                handlers.get(obj).set(prop,[])//如果想要实现移除，可以把prop设置为new Set
+            }
+            handlers.get(obj).get(prop).push(handler)
+        }
+    }
+    let v12,v1,v2
+    let p1 = reactive({a:1})
+    let p2 = reactive({a:2})
+    effect(()=>v12 = p1.a + p2.a)
+    effect(()=>v1 = p1.a)
+    effect(()=>v2 = p2.a)
+
+    //Test case:
+    //p1.a = 4
+    // console.log(v12,v1,v2)//6 4 2
+  
+</script>

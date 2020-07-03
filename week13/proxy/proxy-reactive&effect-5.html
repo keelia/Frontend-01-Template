@@ -1,0 +1,94 @@
+<input id="r" type="range" min="0" max="255"/>
+<input id="g" type="range" min="0" max="255"/>
+<input id="b" type="range" min="0" max="255"/>
+<div id="color" style="width: 100px;height: 100px;background-color: aqua;">
+
+</div>
+<script>
+    //reactivity用法：双向绑定/代替rxjs/绑定输入设备(鼠标/键盘)
+    let handlers = new Map()
+    let reactivities = new Map()
+
+    let usedReactivities = []
+    
+    //类似promise，proxy的构建也是一个function returnnew的方式
+    function reactive(obj){
+        if(reactivities.has(obj)){
+            return reactivities.get(obj)
+        }
+        let proxy = new Proxy(obj,{
+        get(obj,prop){
+            //在get中收集依赖
+            usedReactivities.push([obj,prop])
+            //fix:对nested obj的值，改了并没有效果 =>深度遍历+收集reactivities，保证每次去到的proxy都是reactivity对应的proxy【针对同一个obj的proxy必须相等】
+            if(typeof obj[prop] === "object"){
+                return new reactive(obj[prop])
+            }
+            return obj[prop]
+        },
+        set(obj,prop,val){
+            obj[prop] = val
+            if(handlers.get(obj)){
+                if(handlers.get(obj).get(prop)){
+                    for (const handler of handlers.get(obj).get(prop)) {
+                        handler()
+                    }
+                }
+            }
+            return obj[prop]
+            
+        }
+        }) 
+        reactivities.set(obj,proxy)
+        //把自己的proxy设为自己的：处理reactivaty的reactivity是自己:p1 = reactive(p)
+        reactivities.set(proxy,proxy)
+        return proxy
+    }
+
+    function effect(handler){
+        //effect之前清空usedReactivity，再收集
+        usedReactivities = []
+        handler()//在执行handler()的时候，调用了proxy的get方法，因此在get中收集obj+prop的依赖进usedReactivities
+        //收集之后，把跟obj的prop相关的依赖handler全都存进handlers
+        for(let usedReactivity of usedReactivities){
+            let [obj,prop ] = usedReactivity
+            if(!handlers.has(obj)){
+                handlers.set(obj,new Map())
+            }
+            if(!handlers.get(obj).has(prop)){
+                handlers.get(obj).set(prop,[])//如果想要实现移除，可以把prop设置为new Set
+            }
+            handlers.get(obj).get(prop).push(handler)
+        }
+    }
+    
+    let p = reactive({r:100,g:100,b:100})
+
+    effect(()=>{
+        document.getElementById('r').value = p.r
+    })
+
+    //input-r 2
+    //p.r = 200
+    effect(()=>{
+        document.getElementById('g').value = p.g
+    })
+    effect(()=>{
+        document.getElementById('b').value = p.b
+    })
+    document.getElementById('r').addEventListener('input',event=>{
+        p.r = event.target.value
+    })
+    document.getElementById('g').addEventListener('input',event=>{
+        p.g = event.target.value
+    })
+    document.getElementById('b').addEventListener('input',event=>{
+        p.b = event.target.value
+    })
+    effect(()=>{
+        document.getElementById('color').style.backgroundColor = `rgb(${p.r},${p.g},${p.b}`
+    })
+    
+
+  
+</script>

@@ -1,0 +1,42 @@
+<script>
+    //类似实现：https://github.com/vuejs/vue-next/blob/master/packages/reactivity/__tests__/effect.spec.ts
+    let handlers = []
+    
+    let obj = {
+        a:1,
+        b:2
+    }
+    //类似promise，proxy的构建也是一个function returnnew的方式
+    function reactive(obj){
+        return new Proxy(obj,{
+        get(obj,prop){
+            console.log('get',obj,prop)
+            return obj[prop]
+        },
+        set(obj,prop,val){
+            console.log('set',obj,prop,val)
+            obj[prop] = val
+            //赋值之后执行handler
+            //问题：如果有多个对象，有1个handler，如果把100个对象改一遍，会重复执行所有的handlers
+            for (const handler of handlers) {
+                handler()
+            }
+            return obj[prop]
+            
+        }
+    }) 
+    }
+    let dummy
+    let proxy = reactive(obj)
+
+    function effect(handler){
+        handler()
+        handlers.push(handler)
+    }
+
+    effect(()=>dummy = proxy.a)
+    console.log(dummy)
+    proxy.a = 2
+    console.log(dummy)
+  
+</script>
