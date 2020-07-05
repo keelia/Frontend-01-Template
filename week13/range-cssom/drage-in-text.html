@@ -1,0 +1,92 @@
+<div id="container">
+    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 
+    3 wolf moon officia aute, non cupidatat skateboard dolor brunch.
+    Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, 
+    sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, 
+    craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft 
+    beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 
+    3 wolf moon officia aute, non cupidatat skateboard dolor brunch.
+    Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, 
+    sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, 
+    craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft 
+    beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 
+    3 wolf moon officia aute, non cupidatat skateboard dolor brunch.
+    Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, 
+    sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, 
+    craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft 
+    beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 
+    3 wolf moon officia aute, non cupidatat skateboard dolor brunch.
+    Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, 
+    sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, 
+    craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft 
+    beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 
+    3 wolf moon officia aute, non cupidatat skateboard dolor brunch.
+    Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, 
+    sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, 
+    craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft 
+    beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+</div>
+<!--display:inline-block以实现让模块在文字流中拖动-->
+<div id="dragable" style="width: 100px;height: 100px;background-color: pink;display: inline-block;"></div>
+<script>
+    //1.实现拖拽
+    let dragable = document.getElementById('dragable')
+    let baseX = 0,baseY = 0;
+    dragable.addEventListener('mousedown',(e)=>{
+        let startX = e.clientX,startY = e.clientY
+        let move = event=>{
+            //可视区域，比较准确，跟浏览器窗口一一对应：event.clientX  event.clientY
+            //let x = baseX + event.clientX - startX,y = baseY + event.clientY - startY;
+            //dragable.style.transform = `translate(${x}px,${y}px)`//top left 会改变原来的布局，还要加上position absolute；transform任何元素都可以拖动
+            //[Update]用range代替transform
+            let range = nearest(event.clientX,event.clientY)
+            range.insertNode(dragable)
+        }
+        let up = event=>{//document监听即使离开了浏览器范围也还是会继续监听的
+            //把最后这次的结果作为基准值存进去
+            baseX = baseX +  event.clientX - startX
+            baseY = baseY +  event.clientY - startY
+            //remove event
+            document.removeEventListener('mousemove',move)
+            document.removeEventListener('mouseup',up)
+        }
+        document.addEventListener('mousemove',move)
+        document.addEventListener('mouseup',up)
+    })
+
+    //2.给文字建立一个range的矩阵，把每个文字的空隙都存起来
+    let container = document.getElementById('container')
+    let ranges = []//把range当作埋在dom树的一些空
+    //找到所有能拖进去的位置
+    for (let i = 0; i < container.childNodes[0].textContent.length; i++) {//i也可以+=3，每次空3个文字，就不会放的那么细
+        let range = document.createRange();
+        range.setStart(container.childNodes[0],i)
+        range.setEnd(container.childNodes[0],i)
+        //console.log(range.getBoundingClientRect()) //这里==range.getClientRects
+        ranges.push(range)//Tips：可以把range的结果绑定到变量里面，方便以后做一些针对range的操作
+    }
+
+    //找出距离当前鼠标位置最近的range
+    function nearest(x0,y0){
+        let nearestRange = null
+        let distance = Infinity;//技巧：找最小时候初始值设为正无穷，反之负无穷
+        for (const range of ranges) {
+            let {x,y} = range.getBoundingClientRect()
+            let d = (x0 - x)**2 + (y0-y)**2
+            if(d<distance){
+                distance = d
+                nearestRange = range
+            }
+        }
+        return nearestRange
+    }
+    //优化：拖拽的算法比较粗糙，拖拽的时候模块会跳动；mousemove的时候也需要加一些防抖的机制
+
+    //去掉document的选择事件：拖拽的时候跟selectstart(选择文字)是冲突的；应该在mousedown的时候去禁止选文字，而不是全部禁止
+    document.addEventListener('selectstart',event=>event.preventDefault())
+
+</script>
