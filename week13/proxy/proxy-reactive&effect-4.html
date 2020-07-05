@@ -27,7 +27,7 @@
             return obj[prop]
         },
         set(obj,prop,val){
-            obj[prop] = val
+            obj[prop] = val//Optimize:如果val是object的话，需要重新再注册一边effect
             if(handlers.get(obj)){
                 if(handlers.get(obj).get(prop)){
                     for (const handler of handlers.get(obj).get(prop)) {
