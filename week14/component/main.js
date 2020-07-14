@@ -113,6 +113,7 @@ class Text{//text 不用回有child/attr/pperos
 //以下为业务代码：写了就有
 class MyComponent{
     constructor(config){
+        //config 尽量不要写在这里，而是用gloabl的config去向constructor传参
         this.children = []
         //this.root = document.createElement("div")
         //也可以把attribute和pros用分开
