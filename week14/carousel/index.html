@@ -1,0 +1,120 @@
+<html>
+    <head>
+        <title>Carousel Component</title>
+        <style>
+            .carousel{
+                width: 500px;
+                height: 300px;
+                white-space: nowrap;
+                outline: solid 1px black;
+                //overflow: hidden;
+                margin:auto;
+                zoom:0.25;
+            }
+            .carousel > img{
+                width: 500px;
+                height: 300px;
+                display: inline-block;
+                transition: transform ease 0.5s;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+
+        </div>
+        <script>
+            let data = [
+                "https://static001.geekbang.org/resource/image/bb/21/bb38fb7c1073eaee1755f81131f11d21.jpg",
+                "https://static001.geekbang.org/resource/image/1b/21/1b809d9a2bdf3ecc481322d7c9223c21.jpg",
+                "https://static001.geekbang.org/resource/image/b6/4f/b6d65b2f12646a9fd6b8cb2b020d754f.jpg",
+                "https://static001.geekbang.org/resource/image/73/e4/730ea9c393def7975deceb48b3eb6fe4.jpg",
+            ];
+            class Carousel{
+                constructor(){
+                    this.root = null
+                    this.data = null
+                }
+                render(){
+                    this.root = document.createElement('div')
+                    this.root.classList.add('carousel')
+                    for (const d of this.data) {
+                        let element = document.createElement('img')
+                        element.src = d
+                        this.root.appendChild(element)
+                    }
+
+                    let position = 0
+                    let nextPic = ()=>{//不能有任何dom操作，会改变页面结构
+                        //每次移动2张，因为窗口里只会同时出现2张，不会再多ß
+                        let nextPosition = (position + 1) % this.data.length
+
+                        let current = this.root.childNodes[position]
+                        let next = this.root.childNodes[nextPosition]
+                       
+                        //动画的起始位置不能有transition
+                        current.style.transition = "ease 0s"
+                        next.style.transition = "ease 0s"
+                        console.log('start:',`translateX(${ -100 * position}%)`,`translateX(${100 -100 * nextPosition}%)`)
+                        //动画的起始位置
+                        current.style.transform = `translateX(${ -100 * position}%)`
+                        next.style.transform = `translateX(${100 -100 * nextPosition}%)`
+
+                        //promise不可以
+                        // Promise.resolve().then(() => {//transition生效是需要一定的时间的，所以需要settimeout，不能顺次的写
+                        //     current.style.transition = ""//"ease 0.5s" ="" means use css rules
+                        //     next.style.transition = ""//"ease 0.5s"
+                        //     //动画的终止位置
+                        //     current.style.transform = `translateX(${-100 -100 * position}%)`
+                        //     next.style.transform = `translateX(${-100 * nextPosition}%)`
+                        //     position = nextPosition
+                        // })
+
+                        //用settimeout 16来实现分隔两端动画，是比较安全的做法。也可以用异步函数的趋势ß
+                        setTimeout(() => {//transition生效是需要一定的时间的，所以需要settimeout，不能顺次的写
+                            current.style.transition ="" //means use css rules ease 0.5s
+                           next.style.transition = ""
+                            //动画的终止位置
+                            console.log('end:',`translateX(${-100 -100 * position}%)`,`translateX(${-100 * nextPosition}%)`)
+                            current.style.transform = `translateX(${-100 -100 * position}%)`
+                            next.style.transform = `translateX(${-100 * nextPosition}%)`
+
+                            position = nextPosition
+                            console.log('position',position)
+                        }, 16);
+
+                        //如果用requestAnimationFrame，需要套两层：16ms的settimeout和requestAnimationFrame不都是完全等价的
+                        //requestAnimationFrame意思是找下一帧，js执行完start之后，要等到下一帧才会生效，所以再需要等到再下一帧才会使得终止位置生效
+                        // requestAnimationFrame(() => {
+                        //     requestAnimationFrame(()=>{
+                        //         current.style.transition = "ease 0.5s"
+                        //         next.style.transition = "ease 0.5s"
+                        //         //动画的终止位置
+                        //         current.style.transform = `translateX(${-100 -100 * position}%)`
+                        //         next.style.transform = `translateX(${-100 * nextPosition}%)`
+                        //         position = nextPosition
+                        //     })
+                        // })
+
+                        //轮流的把图片放在最上面
+                        setTimeout(nextPic,3000)
+                    }
+                   setTimeout(nextPic,3000)
+                }
+            }
+            let carousel = new Carousel()
+            //组件生命周期：
+            //update
+            carousel.data = [
+                "https://static001.geekbang.org/resource/image/bb/21/bb38fb7c1073eaee1755f81131f11d21.jpg",
+                "https://static001.geekbang.org/resource/image/1b/21/1b809d9a2bdf3ecc481322d7c9223c21.jpg",
+                "https://static001.geekbang.org/resource/image/b6/4f/b6d65b2f12646a9fd6b8cb2b020d754f.jpg",
+                "https://static001.geekbang.org/resource/image/73/e4/730ea9c393def7975deceb48b3eb6fe4.jpg",
+            ];
+            //render:渲染
+            carousel.render()
+            //mount：挂上dom
+            document.getElementById('container').appendChild(carousel.root)
+        </script>
+    </body>
+</html>
