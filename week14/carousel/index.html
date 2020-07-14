@@ -9,7 +9,7 @@
                 outline: solid 1px black;
                 //overflow: hidden;
                 margin:auto;
-                zoom:0.25;
+                zoom:1;
             }
             .carousel > img{
                 width: 500px;
@@ -41,6 +41,8 @@
                     for (const d of this.data) {
                         let element = document.createElement('img')
                         element.src = d
+                        //禁掉图片本身的拖拽功能
+                        element.addEventListener('dragstart',event=>event.preventDefault())
                         this.root.appendChild(element)
                     }
 
@@ -99,7 +101,65 @@
                         //轮流的把图片放在最上面
                         setTimeout(nextPic,3000)
                     }
-                   setTimeout(nextPic,3000)
+                   //setTimeout(nextPic,3000)
+                   this.root.addEventListener('mousedown',(e)=>{
+                        
+                        let startX = e.clientX,startY = e.clientY
+                        let nextPosition = (position + 1) % this.data.length
+                        let lastPosition = (position -1 + this.data.length) % this.data.length //不能直接position -1, 有可能出现负数，因此要加上data.length
+                        
+                        
+                        let current = this.root.childNodes[position]
+                        let next = this.root.childNodes[nextPosition]
+                        let last = this.root.childNodes[lastPosition]
+
+                        //初始化transition
+                        current.style.transition = "ease 0s"
+                        next.style.transition = "ease 0s"
+                        last.style.transition = "ease 0s"
+
+                        //调整到正确的位置
+                        //应该用csssom去取以下它们的尺寸
+                        current.style.transform = `translateX(${ -500 * position}px)`
+                        last.style.transform = `translateX(${-500 -500 * lastPosition}px)`
+                        next.style.transform = `translateX(${500 -500 * nextPosition}px)`
+                        
+                        let move = event=>{
+                            //500px的container
+                            current.style.transform = `translateX(${event.clientX - startX -500 * position}px)`
+                            last.style.transform = `translateX(${event.clientX - startX -500 - 500 * lastPosition}px)`
+                            next.style.transform = `translateX(${event.clientX - startX + 500 -500  * nextPosition}px)`
+
+                        }
+                        let up = event=>{//document监听即使离开了浏览器范围也还是会继续监听的
+                            //拖过一半500/2就认为可以变下一张了
+                            let offset = 0
+                            if(event.clientX - startX > 250){
+                                offset = 1
+                            }else if(event.clientX - startX <- 250){
+                                offset = -1
+                            }
+                            console.log(offset)
+                            //加transition打开
+                            current.style.transition = ""
+                            next.style.transition = ""
+                            last.style.transition = ""
+
+                            //带动画的transform：和鼠标没有关系了
+                            current.style.transform = `translateX(${offset*500 -500 * position}px)`
+                            last.style.transform = `translateX(${offset*500 -500 - 500 * lastPosition}px)`
+                            next.style.transform = `translateX(${offset*500 + 500 -500  * nextPosition}px)`
+
+                            //用取余运算来实现循环的下标
+                            position = (position - offset + this.data.length) % this.data.length
+                            
+                            //remove event
+                            document.removeEventListener('mousemove',move)
+                            document.removeEventListener('mouseup',up)
+                        }
+                        document.addEventListener('mousemove',move)
+                        document.addEventListener('mouseup',up)
+                    })
                 }
             }
             let carousel = new Carousel()
