@@ -18,6 +18,7 @@
 * Event
 * Lifecycle
 * Children【每个组件体系必须要有children机制，虽然不是每个组件都需要有children】
+> 以上的对象和组件的特性考虑清楚了之后，sfc或者jsx等只是组件化的实现手段，其实都是围绕着以上的8点特性去考虑的。
 
 ## 组件的组成:组件一般是用对象去抽象
 - 组件内部： state；children
