@@ -1,0 +1,22 @@
+<style>
+    #el{
+        width: 100px;
+        height: 100px;
+        background-color: pink;
+
+    }
+</style>
+<div id="el"></div>
+<script>
+let el= document.getElementById('el')
+el.style.transition ="ease 5s"
+
+function start(){
+    el.style.transform = "translate(300px, 300px)"
+}
+function stop(){
+    el.style.transition = "none"
+    el.style.transform = getComputedStyle(el).transform
+}
+
+</script>
