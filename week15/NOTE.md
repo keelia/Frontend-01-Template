@@ -29,3 +29,45 @@
 > 一个组件体系中，不同的组件之间怎么分类，也是更大层面需要考虑的问题
 
 组件化的实现有sfc,jsx，wpf（很全面：https://docs.microsoft.com/en-us/dotnet/api/system.windows.uielement?view=netcore-3.1）等
+
+### 动画
+> 如何停止css动画？(see ./cssAnimationDemo)
+> - 改transition：transition="none";但是元素并没有停在当前位置，而是直接停在了当前动画结束的尾部
+> - 需要得到元素当前的位置getBoundingClientRect
+> - css动画并不总是可控，因此可以考虑用js实现动画
+
+- 最重要的两类动画：
+  - timeline
+  - animation
+- 用户如何使用动画？
+- 考虑用户如何使用动画？
+  - 属性动画
+    ```
+    let animation = new Animation(object,property,start,end,duration,delay,timingFucntion)
+    let animation2 = new Animation(object2,property2,start,end,duration,delay,timingFucntion)
+
+    animation.start()
+    animation2.start()
+
+    animation.stop()
+
+    animation.pause()
+    animation.resume()
+    ```
+- 如果有两个animation，想去同时控制它们的start和stop的话，需要把多个animation进行编排，两个animation之间可能会有时间差，因此多个animation 吗时候，仅用一个animation class是不方便管理的，而当用到settimeout/setinreval/requestanimationframe(动画至少需要使用其一)，在触发这些函数的时候，会损耗性能，不方便进行管理。最好是每一帧只调用一个函数，节约性能。解决方案：
+    ```
+    let timeline = new Timeline(); 
+    timeline.add(animation); 
+    timeline.add(animation2)```
+
+- 然后start换成timeline去操作:
+  ```
+    timeline.start();
+    timeline.stop()
+    timeline.pause()
+    timeline.resume()```
+  
+- 这样就可以把animation所有的特性集成到timneline里，timeline也是多个动画的编排的工具。统一操作一个timeline里面所有的动画。做游戏的时候，可以控制多个时间线
+
+> transform 不会触发重排
+ 
