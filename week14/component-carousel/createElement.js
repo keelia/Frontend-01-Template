@@ -45,7 +45,6 @@ export class Wrapper{
     }
 
     appendChild(child){
-        console.log(child)
         this.children.push(child)
     }
     
@@ -54,7 +53,6 @@ export class Wrapper{
        
         //mountTo是生命周期的函数，所以把child挂上去的时候，不发生在appendchild时，而应该是把自己挂上去的时候，再把自己的child挂上去
         for (const child of this.children) {
-            console.log(child)
             child.mountTo(this.root)
         }
     }
