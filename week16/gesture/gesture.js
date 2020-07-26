@@ -88,7 +88,7 @@ let start = (point,context)=>{
 let move = (point,context)=>{
     //算出移动的距离起点的距离
     let dx = point.clientX - context.startX
-    let dy = point.clientY = context.startY
+    let dy = point.clientY - context.startY
     //判断什么时候变成pan
     if(dx**2 + dy**2 >100 && !context.isPan){//panstart只能触发一次
         if(context.isPress){
@@ -130,7 +130,7 @@ let end = (point,context)=>{
     if(context.isPan){
         //比较move的首元素和当前的dx/dy比较
         let dx = point.clientX - context.startX
-        let dy = point.clientY = context.startY
+        let dy = point.clientY - context.startY
         let record = context.moves[0]
         let speed = Math.sqrt(((record.dx -dx)**2 + (record.dy-dy)** 2))/(Date.now()-record.t)
        let isFlick = speed > 2.5
