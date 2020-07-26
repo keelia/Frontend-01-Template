@@ -88,3 +88,5 @@
 > listner/recorgnaizer/dispatcher 可以考虑分开，做用户自动移
 
 ### 手势应用：练习将手势库应用到carousel组件
+1. 思考：什么时候stop carousel的animation？gesture start的时候；stop animation的时候，还要清除nextpic settimeout的id
+2. 处理拖拽的逻辑
