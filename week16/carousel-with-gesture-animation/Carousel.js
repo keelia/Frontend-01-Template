@@ -78,9 +78,11 @@ export class Carousel{
                 //拖过一半500/2就认为可以变下一张了
                 let direction = 0
                 let dx = event.clientX - event.startX
-                if(dx + offset > 250){
+                //添加处理flick的逻辑
+                console.log("isflick",event.isFlick)
+                if(dx + offset > 250 || (dx > 0 && event.isFlick)){
                     direction = 1
-                }else if(dx + offset < - 250){
+                }else if(dx + offset < - 250 || (dx < 0 && event.isFlick)){
                     direction = -1
                 }
 
