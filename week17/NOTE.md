@@ -21,4 +21,81 @@
 > css只需要append一次
 
 ## 如何封装组件的css，不让它的style污染全局?
-> 自定义自己的css-loader;自定义loader，有了parser之后，将carousel的name作为css rule的前缀,不然别的全局变量污染组件的style。自定义laoder不是唯一的scope方案，最好的方案是给每个组件添加root上的attribute。
+> 自定义自己的css-loader;自定义loader，有了parser之后，将carousel的name作为css rule的前缀,不然别的全局变量污染组件的style。自定义laoder不是唯一的scope方案，最好的方案是给每个组件添加root上的attribute。## 练习：如何用yeoman来做一个generator（如create-react-app/ ng create就是个工程的generator）
+> yeoman是generator的generator
+### yeoman的突出的三种能力
+  - 从用户出收集信息的能力
+  - npm操作的能力
+  - 对文件/template的能力
+### yeoman的generator如下是按行执行的：
+``` var Generator = require('yeoman-generator');
+module.exports = class extends Generator {
+    // The name `constructor` is important here
+    constructor(args, opts) {
+    // Calling the super constructor is important so our generator is correctly set up
+    super(args, opts);
+  }
+  async prompting() {
+    this.answers = await this.prompt([{
+      type    : 'input',
+      name    : 'title',
+      message : 'Your project title',
+    }]);
+  }
+  writing() {
+    this.fs.copyTpl(
+      this.templatePath('index.html'),
+      this.destinationPath('public/index.html'),
+      { title: this.answers.title } // user answer `title` used
+    );
+  }
+};
+```
+目前开发脚手架工具，要么用yeoman要么自研
+自研怎么做，需要解决以下的问题？
+- 输入
+- npm：
+  - 如何控制terminal的cursor：https://stackoverflow.com/questions/10585683/how-do-you-edit-existing-text-and-move-the-cursor-around-in-the-terminal/10830168
+    ```
+        var tty = require('tty');
+        var ttys = require('ttys');
+        var rl = require('readline');
+
+        var stdin = ttys.stdin;
+        var stdout = ttys.stdout;
+
+        // stdout.write('hello  world\n');
+        // stdout.write('\033[1A');
+        // stdout.write('keelia\n');
+
+        //node readlin 就是对上面的封装
+        const readline = require('readline');
+        const { futimesSync } = require('fs');
+
+        const nodeRl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+        });
+
+        // nodeRl.question('What do you think of Node.js? ', (answer) => {
+        //   // TODO: Log the answer in a database
+        //   console.log(`Thank you for your valuable feedback: ${answer}`);
+
+        //   nodeRl.close();
+        // });
+
+        async function ask(question) {
+            return new Promise((resolve,reject)=>{
+                nodeRl.question(question, (answer) => {
+                    resolve(answer)
+                });
+            })
+        }
+
+        void async function(params) {
+            console.log(await ask('What do you think of Node.js? '))
+            nodeRl.close();
+        }()
+        ```
+  - 控制字符 stdin
+- 文件模版：状态机/正则
