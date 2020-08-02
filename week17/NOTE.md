@@ -21,7 +21,44 @@
 > css只需要append一次
 
 ## 如何封装组件的css，不让它的style污染全局?
-> 自定义自己的css-loader;自定义loader，有了parser之后，将carousel的name作为css rule的前缀,不然别的全局变量污染组件的style。自定义laoder不是唯一的scope方案，最好的方案是给每个组件添加root上的attribute。## 练习：如何用yeoman来做一个generator（如create-react-app/ ng create就是个工程的generator）
+> 自定义自己的css-loader;自定义loader，有了parser之后，将carousel的name作为css rule的前缀,不然别的全局变量污染组件的style。自定义laoder不是唯一的scope方案，最好的方案是给每个组件添加root上的attribute。
+
+
+# 工具链：开发过程中使用到的工具
+jenkins
+git
+webpack
+travis
+eslint
+babel
+gulp
+create-react-app
+umi
+gitlab
+vscode
+mocha
+http-server
+vue-cli
+mock
+husky
+prettier
+axios
+yeoman
+postman
+dva
+jest
+easymock
+swagger
+wireshark
+
+工具分类：
+- init工具
+- develop工具：cli交互工具/版本管理工具/语法矫正工具/scaffold工具
+- test工具
+- deploy工具：打包工具/cicd工具
+> 初始化工具往往决定了后面几类工具的选择
+
+## 练习：如何用yeoman来做一个generator（如create-react-app/ ng create就是个工程的generator）
 > yeoman是generator的generator
 ### yeoman的突出的三种能力
   - 从用户出收集信息的能力
