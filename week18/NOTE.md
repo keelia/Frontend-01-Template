@@ -24,3 +24,34 @@
   - 安装@vue/compiler-sfc
   - 使用它的compileTemplate方法去解析自己写的一段js代码，得到输出的object
   - https://github.com/vuejs/vue-next/blob/master/packages/compiler-sfc/__tests__/compileTemplate.spec.ts
+
+> 总结： 构建build工具其实是对文本的处理，掌握对http的解析，html的解析，css，js的解析等。有官方工具的如：html parser，css parser，vue compiler，babel tranformer，一般使用中是官方+自研来达到业务需求。
+
+- 练习（非重点）：npm除了当作命令，还可以当做包用:npm install npm
+  - folder:npm-demo: npm init
+  - npm install npm
+  - main.js: 脚本执行webpack的安装
+      ```
+      const npm = require('npm')
+      let config = {
+          "name": "npm-demo",
+          "version": "1.0.0",
+          "description": "",
+          "main": "index.js",
+          "scripts": {
+          "test": "echo \"Error: no test specified\" && exit 1"
+          },
+          "author": "",
+          "license": "ISC",
+          "dependencies": {
+          "npm": "^6.14.7"
+          }
+      }
+      npm.load(config,(err)=>{
+          npm.install('webpack',(err)=>{
+              console.log(err)
+          })
+      })
+      console.log(npm)
+      ```
+
