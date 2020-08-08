@@ -20,3 +20,7 @@
   - terminal： bable demo.js
   - 输出transfotmed js，适用于多数浏览器平台
 
+- 练习： 使用vue complier 解析js
+  - 安装@vue/compiler-sfc
+  - 使用它的compileTemplate方法去解析自己写的一段js代码，得到输出的object
+  - https://github.com/vuejs/vue-next/blob/master/packages/compiler-sfc/__tests__/compileTemplate.spec.ts
