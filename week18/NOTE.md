@@ -124,3 +124,11 @@ module.exports = function(source,map){
 练习：串联起build和watch工具：实现fsevent检测到当前dir中文件的变化，就执行一次webpack
 - 把watcher.js放到dir的子集中，避免产生循环watch： src/watch.js。 让watcher只watch src的范围
 - webpack.config
+
+# unit test
+- 测试目标：html parseR作为一个单元测试的目标
+- 测试框架：mocha
+- 重点内容：nyc： 利用code coverage 检测测试用例和目标代码的覆盖程度，来看单元测试编写的质量
+> 比起测试框架，更重要的是code coverage [nyc]
+
+> 测试报告跟coverage报告是两回事，测试报告必须要100%通过，coverage至少80%以上，最好90%以上。coverage报告，一般看行覆盖。
