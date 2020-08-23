@@ -72,3 +72,55 @@
   },
   ```
 > rule可以自定义，可开发.但一般都不是自己写。
+
+# 练习：为publish添加oauth用户系统：控制用户权限
+1. 使用githubAPI：https://developer.github.com/apps/building-oauth-apps/。主要看第一步和第三部
+   1. 注册一个app，得到appid, clientid, client secret
+   2. 【publish-tool唤起浏览器】【这段是需要用户去发的，需要用户打开浏览器】得到code：实现用publish工具唤起https://github.com/login/oauth/authorize oauth页面
+      1. 传params： https://github.com/login/oauth/authorize?client_id=Iv1.b2a9a2149bf510c6&redirect_uri=http%3A%2F%2Flocalhost%3A8000&scope=read%3Auser&state=123abc 【
+      2. 拿到code：http://localhost:8000/?code=38ba696b69ce47ce22e2&state=123abc。code相当于入场券，不是真正的auth-token，state是全程带在里面防止跨站攻击用的，也要记住state
+      3. node唤起浏览器，不同os唤起方式不同：https://blog.csdn.net/sleepwalker_1992/article/details/83783234
+         1. publish-tool: npm install child_process
+         2. 启动publish-server，然后启动publish-tool打开浏览器请求用户鉴权
+         3. 用户登陆githug的这个app之后，跳转去的url：http://localhost:8081/auth?code=ca67f99da93a0b86dfb5，就是publish-server提供的服务
+         4. publish-server收到request之后，如果是auth的request，就去请求github的access token
+         5. publish-sever拿到access token之后需要回传给client端，让client端去存储
+   3. 【publish-server】【服务端：是在node server上发的，client_secret是机密】code去换token：POST https://github.com/login/oauth/access_token 
+        ```
+        //这段代码应该运行在node server【服务器】中的 
+        {
+            let code = "588661aa7d2d7151251f"
+            let state = "123abc"
+            let client_id = "Iv1.b2a9a2149bf510c6"
+            let client_secret = "13a2f5992d5c0107d7b1e8c123a9e31d42be7342"
+            let redirect_uri = encodeURIComponent('http://localhost:8081/auth')
+
+                let params = `code=${code}&state=${state}&client_secret=${client_secret}&client_id=${client_id}&redirect_uri=${redirect_uri}`
+            let xhr = new XMLHttpRequest
+            xhr.open("POST",`https://github.com/login/oauth/access_token?${params}`,true,)
+            xhr.send(null)
+
+            xhr.addEventListener('readystatechange',function(event){
+                if(xhr.readyState === 4){
+                    console.log(xhr.responseText)
+                }
+            })
+        }
+
+        ```
+   4. 【publish-tool/publich-server都可以】拿到access-token：access_token=f3f7bd7dc3d6ba6f2e0fa40ab9ca49e9f9fdd41f&expires_in=28800&refresh_token=r1.e48f8e866a8fb47bf0a0849319aedbd8ab8fdefadc6365ca349a95daf2beef743157968001d5bd93&refresh_token_expires_in=15893999&scope=&token_type=bearer。然后就可以去调用github的api了 【这个access token是可以在用户的local的，客户端/服务端都可以】
+      1. 调用user信息：Authorization: token OAUTH-TOKEN | GET https://api.github.com/user
+      ```
+       let xhr = new XMLHttpRequest
+       xhr.open("GET",`https://api.github.com/user`,true,)
+       xhr.setRequestHeader("Authorization", "token f3f7bd7dc3d6ba6f2e0fa40ab9ca49e9f9fdd41f")
+       xhr.send(null)
+
+       xhr.addEventListener('readystatechange',function(event){
+           if(xhr.readyState === 4){
+               console.log(xhr.responseText)
+           }
+       })
+   ```
+
+作业：用promice管理以上的步骤
