@@ -1,13 +1,7 @@
 toy-tool/node_modules
-toy-tool/package-lock.json
 tt-example/node_modules
-tt-example/package-lock.json
 tt-example/.nyc_output
 publish/publish-server/node_modules
-publish/publish-server/package-lock.json
 publish/server/node_modules
-publish/server/package-lock.json
 publish/publish-server-vanilla/node_modules
-publish/publish-server-vanilla/package-lock.json
 publish/publish-tool/node_modules
-publish/publish-tool/package-lock.json

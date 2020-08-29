@@ -1,9 +1,6 @@
 publish/server/node_modules
-publish/server/package-lock.json
 publish/server/public/*
 publish/publish-server-vanilla/node_modules
-publish/publish-server-vanilla/package-lock.json
 publish/publish-tool/node_modules
-publish/publish-tool/package-lock.json
 publish/publish-tool/package/*
 publish-server-auth.key
