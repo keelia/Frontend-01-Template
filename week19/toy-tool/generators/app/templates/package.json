@@ -7,7 +7,9 @@
         "test": "mocha --require @babel/register",
         "coverage": "nyc mocha",
         "start":"webpack-dev-server",
-        "build":"webpack"
+        "build":"webpack",
+        "publish": "node /Users/kangli/.nvm/versions/node/v14.8.0/lib/node_modules/toy-publish-tool/publish.js",
+        "lint":"eslint ./src"
     },
     "author": "keelia",
     "license": "MIT"
